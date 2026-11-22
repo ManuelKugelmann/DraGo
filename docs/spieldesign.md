@@ -9,7 +9,7 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 
 ## Was es schon gibt
 
-- Startbild in 3D: Kamerabild als Hintergrund, davor ein Ring-Tor. Hinter dem Wasser sieht man das Ei.
+- Startbild in 3D: Kamerabild als Hintergrund, davor ein Ring-Tor. Hinter dem Wasser schimmert die Höhle.
 - Namen eingeben, Figur mit ◀ ▶ wählen (4 niedliche Figuren, keine Klassen), natürliche Haarfarben.
 - 📷 wechselt: Rückkamera → Frontkamera → aus. **AR** (nur Android Chrome): Boden antippen, Tor steht dort fest.
 - Figur antippen: dreht sich um und jubelt. **Los!**: läuft durchs Tor in eine Höhle.
