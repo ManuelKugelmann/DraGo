@@ -22,7 +22,10 @@ export const TEXTE = {
     magie_naja: 'Geht auch!',
     magie_falsch: 'Knapp daneben!',
     magie_neu: 'Neue Funken!',
-    magie_geschluepft: 'Dein Drache schlüpft!'
+    magie_geschluepft: 'Dein Drache schlüpft!',
+    magie_kalt: 'Oh nein, das Ei ist kalt geworden!',
+    magie_nochmal: 'Nochmal ✨',
+    alter_frage: 'Wie alt bist du?'
 };
 
 // Spielfiguren (3D, KayKit Adventurers, CC0). datei = Datei in public/figuren/.
@@ -34,17 +37,20 @@ export const FIGUREN = [
     { datei: 'rogue.glb' }
 ];
 
-// Natürliche Haarfarben zum Antippen: Original, schwarz, dunkelbraun, braun, hellbraun, blond, rot, grau.
 // Wo das erste Ei versteckt ist (in Prozent vom Bild: links, oben).
 export const EI_VERSTECK = { links: 9, oben: 44 };
 
+// Natürliche Haarfarben zum Antippen: Original, schwarz, dunkelbraun, braun, hellbraun, blond, rot, grau.
 export const HAARFARBEN = [null, 0x1c1410, 0x3b2416, 0x6a4128, 0x9a6a3e, 0xd9b26a, 0xb5532a, 0xc9c4bc];
 
-// Magiestrom-Spiel (Ei ausbrüten).
-// start = Funken am Anfang, ziel = Wärme zum Schlüpfen, bonus = mal so viel bei richtiger Antwort,
-// schatten_start / schatten_plus = Schatten-Funken in der ersten Runde / mehr pro Runde.
+// Magiestrom-Spiel (Ei ausbrüten), läuft in Echtzeit.
+// start = Funken am Anfang, ziel = Wärme zum Schlüpfen, zeit = Sekunden bis das Ei kalt ist,
+// bonus = mal so viele Funken bei richtiger Antwort,
+// schatten_start = Schatten pro Sekunde am Anfang, schatten_plus = so viel mehr pro 10 Sekunden,
+// aufnahme = Anteil der Funken, der pro Sekunde ins Ei fliegt, kaelte = Wärme-Verlust je Schatten am Ei,
 // sterne = Sekunden bis zum Schlüpfen für ⭐⭐⭐ und ⭐⭐ (schneller = stärkerer Drache).
-export const MAGIE = { start: 3, ziel: 60, bonus: 2, schatten_start: 2, schatten_plus: 2, sterne: [90, 180] };
+export const MAGIE = { start: 5, ziel: 60, zeit: 90, bonus: 2, schatten_start: 0.6, schatten_plus: 0.3,
+    aufnahme: 0.25, kaelte: 2, sterne: [45, 70] };
 
 // Vokabeln für Frage-Tore (deutsch -> englisch). Einfach Zeilen dazuschreiben!
 export const VOKABELN = [

@@ -35,9 +35,11 @@ export function schaetzTor(n, rnd = Math.random) {
         rechnungen: [RECHNUNGEN[0], RECHNUNGEN[2]], richtig: n > 2 ? 0 : 1 };
 }
 
+const STANDARD = { plusBis: 100, malReihen: [2, 3, 4, 5, 6, 7, 8, 9, 10], malBis: 10, vokabeln: true };
+
 /** Einmaleins-Frage mit 3 Antworten (falsche Antworten: Nachbar-Reihe, knapp daneben). */
-export function rechenTor(rnd = Math.random) {
-    const a = ganz(rnd, 2, 10), b = ganz(rnd, 2, 10), r = a * b;
+export function rechenTor(rnd = Math.random, st = STANDARD) {
+    const a = st.malReihen[Math.floor(rnd() * st.malReihen.length)], b = ganz(rnd, 1, st.malBis), r = a * b;
     const falsch = new Set();
     for (const f of mische([r + a, r - a, r + b, r - b, r + 1, r - 1, r + 10], rnd)) {
         if (f > 0 && f !== r) falsch.add(f);
@@ -47,13 +49,13 @@ export function rechenTor(rnd = Math.random) {
     return { art: 'frage', frage: `${a} · ${b} = ?`, optionen: optionen.map(String), richtig: optionen.indexOf(r) };
 }
 
-/** Plus- oder Minus-Aufgabe bis 100 mit 3 Antworten. */
-export function plusMinusTor(rnd = Math.random) {
-    const plus = rnd() < 0.5;
-    const a = ganz(rnd, 10, 90), b = ganz(rnd, 2, plus ? 100 - a : a - 1);
+/** Plus- oder Minus-Aufgabe (bis st.plusBis) mit 3 Antworten. */
+export function plusMinusTor(rnd = Math.random, st = STANDARD) {
+    const plus = rnd() < 0.5, g = st.plusBis;
+    const a = ganz(rnd, Math.ceil(g * 0.1), Math.floor(g * 0.9)), b = ganz(rnd, 1, plus ? g - a : a - 1);
     const r = plus ? a + b : a - b;
     const falsch = new Set();
-    for (const f of mische([r + 10, r - 10, r + 1, r - 1, r + 2], rnd)) {
+    for (const f of mische([r + 10, r - 10, r + 1, r - 1, r + 2, r - 2], rnd)) {
         if (f >= 0 && f !== r) falsch.add(f);
         if (falsch.size === 2) break;
     }
@@ -61,12 +63,13 @@ export function plusMinusTor(rnd = Math.random) {
     return { art: 'frage', frage: `${a} ${plus ? '+' : '−'} ${b} = ?`, optionen: optionen.map(String), richtig: optionen.indexOf(r) };
 }
 
-/** Zufälliges Tor: Schätzen, Einmaleins, Plus/Minus oder Vokabel. */
-export function zufallsTor(n, vokabeln, rnd = Math.random) {
-    const art = Math.floor(rnd() * 4);
+/** Zufälliges Tor: Schätzen, Einmaleins, Plus/Minus oder (ab Klasse 3) Vokabel. */
+export function zufallsTor(n, vokabeln, rnd = Math.random, st = STANDARD) {
+    const arten = st.vokabeln ? 4 : 3;
+    const art = Math.floor(rnd() * arten);
     if (art === 0) return schaetzTor(n, rnd);
-    if (art === 1) return rechenTor(rnd);
-    if (art === 2) return plusMinusTor(rnd);
+    if (art === 1) return rechenTor(rnd, st);
+    if (art === 2) return plusMinusTor(rnd, st);
     return vokabelTor(vokabeln, rnd);
 }
 
@@ -98,4 +101,41 @@ export function staerke(sekunden, grenzen = [90, 180]) {
     if (sekunden <= grenzen[0]) return 3;
     if (sekunden <= grenzen[1]) return 2;
     return 1;
+}
+
+// ---------- Echtzeit: Schatten kommen ständig, die Zeit läuft ----------
+// m = MAGIE aus daten.js: start, ziel, zeit (Sekunden), schatten_start / schatten_plus (pro Sekunde, + pro 10 s),
+// aufnahme (Anteil der Funken, der pro Sekunde ins Ei fliegt), kaelte (Wärme-Verlust pro Schatten, der durchkommt).
+
+export const neuerZustand = m => ({ n: m.start, warm: 0, zeit: 0, schattenRest: 0, aufnahmeRest: 0 });
+
+/** Wie viele neue Schatten in dt starten (werden mit der Zeit mehr). */
+export function neueSchatten(z, dt, m) {
+    z.schattenRest += (m.schatten_start + m.schatten_plus * z.zeit / 10) * dt;
+    const k = Math.floor(z.schattenRest);
+    z.schattenRest -= k;
+    return k;
+}
+
+/** Ein Schatten kommt an: löscht einen Funken, oder kühlt das Ei, wenn keiner mehr da ist. */
+export function treffer(z, m) {
+    if (z.n > 0) { z.n--; return 'funke'; }
+    z.warm = Math.max(0, z.warm - m.kaelte);
+    return 'ei';
+}
+
+/** Funken fliegen nach und nach ins Ei und wärmen es. Gibt die Zahl der aufgenommenen Funken zurück. */
+export function aufnehmen(z, dt, m) {
+    z.aufnahmeRest += z.n * m.aufnahme * dt;
+    const k = Math.min(z.n, Math.floor(z.aufnahmeRest));
+    z.aufnahmeRest -= k;
+    z.n -= k; z.warm += k;
+    return k;
+}
+
+/** 'laeuft' | 'geschluepft' | 'kalt' */
+export function stand(z, m) {
+    if (z.warm >= m.ziel) return 'geschluepft';
+    if (z.zeit >= m.zeit) return 'kalt';
+    return 'laeuft';
 }

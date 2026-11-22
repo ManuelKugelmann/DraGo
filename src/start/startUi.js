@@ -3,6 +3,7 @@ import { TEXTE, FIGUREN, HAARFARBEN, EI_VERSTECK } from '../daten.js';
 import { kameraAn, kameraAus } from './kamera.js';
 import { arMoeglich, arSitzung } from './ar.js';
 import MagieStrom from '../magiestrom/MagieStrom.js';
+import { ALTER } from '../magiestrom/stufen.js';
 
 const SPEICHER = 'drago_spieler';
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
@@ -14,7 +15,8 @@ function lade() {
     return {
         name: typeof s.name === 'string' ? s.name.slice(0, 16) : '',
         figur: FIGUREN[s.figur] ? s.figur : 0,
-        haar: s.haar in HAARFARBEN ? s.haar : 0
+        haar: s.haar in HAARFARBEN ? s.haar : 0,
+        alter: ALTER.includes(s.alter) ? s.alter : 9
     };
 }
 
@@ -39,6 +41,16 @@ export function baueStartUi(szene, leinwand) {
         speichere();
         szene.zeige(wahl.figur, wahl.haar).then(() => szene.winken());
     };
+    // Alter (für die Schwierigkeit der Aufgaben)
+    const alter = el('div', 'alter');
+    alter.append(el('span', '', TEXTE.alter_frage));
+    const alterKnoepfe = ALTER.map(a => {
+        const b = el('button', a === wahl.alter ? 'an' : '', String(a) + (a === ALTER.at(-1) ? '+' : ''));
+        b.onclick = () => { wahl.alter = a; speichere(); alterKnoepfe.forEach((k, i) => k.classList.toggle('an', ALTER[i] === a)); };
+        alter.append(b);
+        return b;
+    });
+
     const links = el('button', 'pfeil links', '◀');
     const rechts = el('button', 'pfeil rechts', '▶');
     links.onclick = () => wechsel(-1);
@@ -114,7 +126,7 @@ export function baueStartUi(szene, leinwand) {
     magieEbene.style.backgroundImage = 'url(img/splash.webp)';
     let magie = null;
     brueten.onclick = async () => {
-        magie = new MagieStrom(magieEbene, await szene.figurBild());
+        magie = new MagieStrom(magieEbene, await szene.figurBild(), wahl.alter);
         document.body.classList.add('magie');
         magie.spielen();
     };
@@ -144,6 +156,6 @@ export function baueStartUi(szene, leinwand) {
     };
 
     leinwand.addEventListener('pointerdown', () => szene.winken());
-    ui.append(titel, name, links, rechts, kamera, ar, arHinweis, meldung, unten, hinter, magieEbene);
+    ui.append(titel, name, alter, links, rechts, kamera, ar, arHinweis, meldung, unten, hinter, magieEbene);
     szene.zeige(wahl.figur, wahl.haar);
 }

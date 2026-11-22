@@ -39,6 +39,8 @@ export default class Figur3D {
         this.obj = new THREE.Group();
         this.obj.add(gltf.scene);
         gltf.scene.traverse(o => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false; } });
+        // Keine Klassen-Ausrüstung: Helme, Hüte und Umhänge weg, es sollen normale Schüler sein.
+        gltf.scene.traverse(o => { if (/_(Hat|Helmet|Cape)$/.test(o.name)) o.visible = false; });
         const h = new THREE.Box3().setFromObject(gltf.scene).getSize(new THREE.Vector3()).y || 1;
         gltf.scene.scale.setScalar(HOEHE / h);
         this.konturDicke = KONTUR * h / HOEHE;   // in Modell-Einheiten

@@ -14,13 +14,16 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 - 📷 wechselt: Rückkamera → Frontkamera → aus. **AR** (nur Android Chrome): Boden antippen, Tor steht dort fest.
 - Figur antippen: dreht sich um und jubelt. **Los!**: läuft durchs Tor in eine Höhle.
 - In der Höhle ist das Ei **versteckt**, nur ein Glitzern verrät es. Antippen = gefunden.
-- **Ausbrüten (Magiestrom):** Deine Figur steht neben dem Ei. Gelöste Aufgaben schicken Funken zum Ei, sie kreisen
+- **Alter** am Start wählen (6–12): Aufgaben passen sich an (Klasse 1: bis 20, 2er/5er/10er; Englisch ab Klasse 3).
+- **Ausbrüten (Magiestrom, Echtzeit, 90 s):** Deine Figur steht neben dem Ei. Gelöste Aufgaben schicken Funken zum Ei, sie kreisen
   darum. Schatten-Funken kommen von außen, jeder Treffer löscht einen eigenen Funken. Der Rest wärmt das Ei.
   Aufgaben zufällig: „Was gibt mehr Funken?“ (× 2 oder + 4), Einmaleins, Plus/Minus, Vokabeln (richtig = doppelt).
   Wärme voll: Risse, Ei bricht auf, zufälliger Babydrache (Feuer, Sturm, Rune). Schneller = stärker (1–3 ⭐).
 
 ## Entscheidungen
 
+- 2026-11-22: Magiestrom **in Echtzeit**: ständiger Schatten-Strom, **gegen die Zeit**, man **kann verlieren** und muss
+  nochmal versuchen. Figuren: **normale Schüler**, **Junge und Mädchen** (kommt mit dem Pupil-Rig).
 - 2026-11-22: **Alter am Anfang fragen**; Schwierigkeit der Aufgaben nach **Alter / Klasse**.
 - 2026-11-22: Magiestrom: Figur **neben dem Ei**, Funken **kreisen ums Ei** und wehren Schatten ab. **Endlos** bis die
   Wärme reicht. **Mehr Funken in kürzerer Zeit = stärkerer Drache.** Fragen **zufällig gemischt**, mehr Mathe.

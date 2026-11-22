@@ -1,46 +1,62 @@
-// Magiestrom-Spiel: eigene Funken kreisen um das Ei und wehren Schatten-Funken ab, die von außen kommen.
-// Jeder Treffer löscht einen eigenen und einen Schatten-Funken (Glitzer). Die übrigen eigenen Funken
-// fliegen ins Ei und wärmen es. Ist es warm genug: Risse, aufbrechen, ein zufälliger Babydrache.
-// Die eigene Spielfigur steht neben dem Ei.
-import { zufallsTor, nachTor, schatten, nachSchatten, staerke } from './regeln.js';
+// Magiestrom-Spiel in Echtzeit: Die Zeit läuft. Schatten-Funken kommen ständig von außen (immer mehr).
+// Eigene Funken kreisen um das Ei, fangen Schatten ab und fliegen nach und nach ins Ei (Wärme).
+// Gelöste Aufgaben bringen neue Funken – sie fliegen von der Spielfigur zum Ei.
+// Ist das Ei rechtzeitig warm: Risse, aufbrechen, zufälliger Babydrache. Sonst: kalt – nochmal!
+import { zufallsTor, nachTor, staerke, neuerZustand, neueSchatten, treffer, aufnehmen, stand } from './regeln.js';
+import { stufe } from './stufen.js';
 import { MAGIE, VOKABELN, TEXTE, DRACHEN } from '../daten.js';
 
 const warte = ms => new Promise(r => setTimeout(r, ms));
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
 const BILD = { w: 1344, h: 768, ei: { x: 685, y: 480, rx: 150, ry: 185 } };   // Ei im Hintergrundbild (Pixel)
-const MAX_KREIS = 150;   // so viele eigene Funken werden höchstens gezeichnet
+const MAX_KREIS = 120;     // so viele eigene Funken werden höchstens gezeichnet
+const FLUG = 1.3;          // Sekunden, die ein Schatten bis zum Ei braucht
 const lade = src => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; });
 
+/** Vorgerenderter Leucht-Punkt (schnell zu zeichnen). */
+function leuchtPunkt(farbe, r = 16) {
+    const c = document.createElement('canvas');
+    c.width = c.height = r * 2;
+    const g = c.getContext('2d'), v = g.createRadialGradient(r, r, 0, r, r, r);
+    v.addColorStop(0, '#ffffff'); v.addColorStop(0.25, farbe); v.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = v; g.fillRect(0, 0, r * 2, r * 2);
+    return c;
+}
+
 export default class MagieStrom {
-    constructor(wurzel, figurBild = null) {
+    constructor(wurzel, figurBild = null, alter = 9) {
         this.wurzel = wurzel;
-        this.figurBild = figurBild;   // Bild der eigenen Spielfigur (oder null)
+        this.figurBild = figurBild;
+        this.stufe = stufe(alter);
         this.leinwand = el('canvas', 'magie-leinwand');
         this.ctx = this.leinwand.getContext('2d');
         this.anzeige = el('div', 'magie-zahl');
         this.waerme = el('div', 'magie-waerme');
         this.balken = el('div', 'magie-balken');
-        this.waerme.append(el('span', '', '🔥'), this.balken);
+        this.uhr = el('div', 'magie-uhr');
+        this.waerme.append(el('span', '', '🔥'), this.balken, el('span', '', '⏳'), this.uhr);
         this.tor = el('div', 'magie-tor');
         this.hinweis = el('div', 'magie-hinweis');
-        wurzel.append(this.leinwand, this.waerme, this.anzeige, this.tor, this.hinweis);
-        this.teilchen = [];      // Glitzer {x,y,vx,vy,leben,art}
-        this.kreis = [];         // eigene Funken im Orbit {w, r, v}
-        this.angreifer = [];     // Schatten-Funken, die angreifen {x,y,v}
-        this.lauernd = [];       // Schatten am Rand, die warten
-        this.risse = [];
-        this.scherben = [];
-        this.drache = null;
-        this.n = MAGIE.start;
-        this.s = schatten(0, MAGIE.schatten_start, MAGIE.schatten_plus);
-        this.passeKreis();
+        this.nochmal = el('button', 'magie-nochmal', TEXTE.magie_nochmal);
+        this.nochmal.onclick = () => this.spielen();
+        wurzel.append(this.leinwand, this.waerme, this.anzeige, this.tor, this.hinweis, this.nochmal);
+        this.punkt = { funke: leuchtPunkt('rgba(255,190,80,0.9)'), licht: leuchtPunkt('rgba(255,255,220,0.8)', 10),
+            puff: leuchtPunkt('rgba(170,120,255,0.8)', 12) };
         lade('img/splash.webp').then(b => { this.hintergrund = b; });
         this.groesse = this.groesse.bind(this);
         addEventListener('resize', this.groesse);
         this.groesse();
+        this.zuruecksetzen();
         let alt = performance.now();
         const schleife = t => { this.schritt(Math.min(0.05, (t - alt) / 1000), t); alt = t; this.lauf = requestAnimationFrame(schleife); };
         this.lauf = requestAnimationFrame(schleife);
+    }
+
+    zuruecksetzen() {
+        this.z = neuerZustand(MAGIE);
+        this.teilchen = []; this.kreis = []; this.angreifer = []; this.risse = []; this.scherben = [];
+        this.drache = null; this.laeuft = false;
+        this.passeKreis();
     }
 
     groesse() {
@@ -48,84 +64,66 @@ export default class MagieStrom {
         this.w = innerWidth; this.h = innerHeight;
         this.leinwand.width = this.w * d; this.leinwand.height = this.h * d;
         this.ctx.setTransform(d, 0, 0, d, 0, 0);
-        // Hintergrund ist "cover": Ei-Position im Bild auf den Bildschirm umrechnen
-        const k = Math.max(this.w / BILD.w, this.h / BILD.h);
+        const k = Math.max(this.w / BILD.w, this.h / BILD.h);    // Hintergrund ist "cover"
         const ox = (this.w - BILD.w * k) / 2, oy = (this.h - BILD.h * k) / 2;
         this.ei = { x: ox + BILD.ei.x * k, y: oy + BILD.ei.y * k, rx: BILD.ei.rx * k, ry: BILD.ei.ry * k, k, ox, oy };
         this.figurPlatz = { x: this.ei.x - this.ei.rx * 2.4, y: this.ei.y + this.ei.ry * 1.05, h: this.ei.ry * 2 };
     }
 
-    // ---------- Spielablauf ----------
+    // ---------- Ablauf ----------
 
     async spielen() {
-        this.warm = 0;
-        this.startZeit = performance.now();
-        this.zeigeZahl(); this.zeigeWaerme();
-        for (let runde = 0; this.warm < MAGIE.ziel; runde++) {
-            this.s = schatten(runde, MAGIE.schatten_start, MAGIE.schatten_plus);
-            this.lauernd = Array.from({ length: Math.min(40, this.s) }, () => this.randPunkt());
-            this.zeigeZahl();
-            const tor = zufallsTor(this.n, VOKABELN);
+        this.zuruecksetzen();
+        this.wurzel.classList.remove('verloren');
+        this.hinweis.classList.remove('zeigen');
+        this.laeuft = true;
+        this.zeige();
+        // Aufgaben ohne Pause, solange das Spiel läuft
+        while (this.laeuft) {
+            const tor = zufallsTor(this.z.n, VOKABELN, Math.random, this.stufe);
             const wahl = await this.frage(tor);
+            if (!this.laeuft) break;
             const gut = wahl === tor.richtig;
-            this.n = nachTor(tor, wahl, this.n, MAGIE.bonus);
+            const neu = Math.max(0, nachTor(tor, wahl, Math.max(1, this.z.n), MAGIE.bonus) - this.z.n);
+            this.z.n += neu;
             this.passeKreis();
-            this.zeigeZahl();
             this.melde(gut ? TEXTE.magie_richtig : (tor.art === 'schaetzen' ? TEXTE.magie_naja : TEXTE.magie_falsch), gut);
-            await warte(700);
-
-            // Schatten greifen an; jeder Treffer löscht einen eigenen Funken
-            const erg = nachSchatten(this.n, this.s, MAGIE.start);
-            this.angreifer = this.lauernd.map(p => ({ ...p, v: 120 + Math.random() * 90 }));
-            this.lauernd = [];
-            this.zuLoeschen = erg.geloescht;
-            await warte(2200);
-            this.angreifer = [];
-            this.n = erg.uebrig;
-            this.passeKreis();
-            this.zeigeZahl();
-
-            if (erg.uebrig > 0) {
-                this.insEi = true;            // übrige Funken fliegen ins Ei
-                await warte(900);
-                this.insEi = false;
-                this.warm += erg.uebrig;
-                this.zeigeWaerme();
-                this.wurzel.classList.add('ei-wackelt');
-                await warte(500);
-                this.wurzel.classList.remove('ei-wackelt');
-            } else {
-                this.melde(TEXTE.magie_neu, true);
-            }
-            this.n = erg.weiter;
-            this.passeKreis();
-            this.zeigeZahl();
+            await warte(250);
         }
-        await this.schluepfen();
     }
 
-    /** So viele Funken kreisen sichtbar um das Ei, wie man hat (gedeckelt). */
+    /** Spiel-Ende: geschlüpft oder kalt. */
+    async ende(ergebnis) {
+        this.laeuft = false;
+        this.tor.classList.remove('offen');
+        this.antwort?.(-1);
+        if (ergebnis === 'geschluepft') await this.schluepfen();
+        else {
+            this.angreifer = [];
+            this.wurzel.classList.add('verloren');
+            this.melde(TEXTE.magie_kalt, false, true);
+        }
+    }
+
     passeKreis() {
-        const soll = Math.min(MAX_KREIS, this.n);
-        // Neue Funken kommen von der Spielfigur angeflogen (f: 0 -> 1)
-        const von = this.figurPlatz ? { x: this.figurPlatz.x + this.figurPlatz.h * 0.15, y: this.figurPlatz.y - this.figurPlatz.h * 0.55 } : null;
+        const soll = Math.min(MAX_KREIS, this.z.n);
+        const f = this.figurPlatz, von = { x: f.x + f.h * 0.15, y: f.y - f.h * 0.55 };
+        let neu = 0;
         while (this.kreis.length < soll) {
-            this.kreis.push({ w: Math.random() * Math.PI * 2, r: 1.25 + Math.random() * 0.45, v: 0.8 + Math.random() * 1.2,
-                von, f: von ? -this.kreis.length * 0.02 % 0.6 : 1 });
+            this.kreis.push({ w: Math.random() * Math.PI * 2, r: 1.25 + Math.random() * 0.45, v: 0.8 + Math.random() * 1.2, von, f: -0.04 * neu++ });
         }
         if (this.kreis.length > soll) this.kreis.length = soll;
     }
 
-    randPunkt() {
-        const a = Math.random() * Math.PI * 2, r = Math.max(this.w, this.h) * 0.55;
-        return { x: this.ei.x + Math.cos(a) * r, y: this.ei.y + Math.sin(a) * r * 0.7 };
+    zeige() {
+        this.anzeige.textContent = '✨ ' + this.z.n;
+        this.balken.style.setProperty('--wert', Math.min(1, this.z.warm / MAGIE.ziel));
+        this.uhr.style.setProperty('--wert', Math.max(0, 1 - this.z.zeit / MAGIE.zeit));
     }
-
-    zeigeZahl() { this.anzeige.textContent = '✨ ' + this.n + '   🌑 ' + this.s; }
-    zeigeWaerme() { this.balken.style.setProperty('--wert', Math.min(1, this.warm / MAGIE.ziel)); }
 
     frage(tor) {
         return new Promise(fertig => {
+            this.antwort = fertig;
             this.tor.replaceChildren(el('div', 'magie-frage', tor.art === 'schaetzen' ? `${TEXTE.magie_schaetzen} (${tor.frage})` : tor.frage));
             const reihe = el('div', 'magie-optionen');
             tor.optionen.forEach((o, i) => {
@@ -142,15 +140,14 @@ export default class MagieStrom {
         this.hinweis.textContent = text;
         this.hinweis.className = 'magie-hinweis zeigen ' + (gut ? 'gut' : 'naja') + (bleibt ? ' gross' : '');
         clearTimeout(this.meldeZeit);
-        if (!bleibt) this.meldeZeit = setTimeout(() => this.hinweis.classList.remove('zeigen'), 1000);
+        if (!bleibt) this.meldeZeit = setTimeout(() => this.hinweis.classList.remove('zeigen'), 800);
     }
 
     // ---------- Schlüpfen: Risse -> aufbrechen -> Babydrache ----------
 
     async schluepfen() {
-        this.tor.classList.remove('offen');
-        this.lauernd = [];
         const { x, y, rx, ry } = this.ei;
+        this.angreifer = [];
         for (let r = 0; r < 3; r++) {
             const linie = [];
             let px = x + (r - 1) * rx * 0.45, py = y - ry * (0.75 - Math.abs(r - 1) * 0.15);
@@ -166,16 +163,14 @@ export default class MagieStrom {
         await warte(500);
         this.wurzel.classList.add('blitz');
         this.erzeugeScherben();
-        this.risse = [];
-        this.kreis = [];
+        this.risse = []; this.kreis = [];
         for (let i = 0; i < 60; i++) this.glitzer(x, y - ry * 0.3, 'licht');
         await warte(250);
         const arten = Object.keys(DRACHEN);
         const art = arten[Math.floor(Math.random() * arten.length)];
-        const bild = await lade(DRACHEN[art].bild);
-        this.drache = { bild, t0: performance.now() };
+        this.drache = { bild: await lade(DRACHEN[art].bild), t0: performance.now() };
         this.wurzel.classList.remove('blitz');
-        const sterne = staerke((performance.now() - this.startZeit) / 1000, MAGIE.sterne);
+        const sterne = staerke(this.z.zeit, MAGIE.sterne);
         this.melde(`${'⭐'.repeat(sterne)} ${DRACHEN[art].name}!`, true, true);
         this.gewonnen?.(art, sterne);
     }
@@ -184,14 +179,12 @@ export default class MagieStrom {
         const { x, y, rx, ry } = this.ei;
         for (let i = 0; i < 9; i++) {
             const a = -Math.PI / 2 + (i - 4) * 0.35;
-            this.scherben.push({
-                sx: x + Math.cos(a) * rx * 0.5, sy: y + Math.sin(a) * ry * 0.55, gr: rx * (0.35 + Math.random() * 0.2),
-                vx: Math.cos(a) * (180 + Math.random() * 200), vy: Math.sin(a) * 260 - 120, dreh: (Math.random() - 0.5) * 8, w: 0, t: 0
-            });
+            this.scherben.push({ sx: x + Math.cos(a) * rx * 0.5, sy: y + Math.sin(a) * ry * 0.55, gr: rx * (0.35 + Math.random() * 0.2),
+                vx: Math.cos(a) * (180 + Math.random() * 200), vy: Math.sin(a) * 260 - 120, dreh: (Math.random() - 0.5) * 8, w: 0, t: 0 });
         }
     }
 
-    // ---------- Teilchen ----------
+    // ---------- Simulation + Teilchen ----------
 
     glitzer(x, y, art) {
         const a = Math.random() * Math.PI * 2, v = 40 + Math.random() * 160;
@@ -207,25 +200,46 @@ export default class MagieStrom {
     }
 
     schritt(dt, t) {
-        const e = this.ei;
-        // Schatten fliegen aufs Ei zu; am Funken-Ring treffen sie einen eigenen Funken
+        const e = this.ei, z = this.z;
+        if (this.laeuft) {
+            z.zeit += dt;
+            // neue Schatten starten am Rand
+            for (let i = neueSchatten(z, dt, MAGIE); i > 0; i--) {
+                const a = Math.random() * Math.PI * 2, r = Math.max(this.w, this.h) * 0.6;
+                const x = e.x + Math.cos(a) * r, y = e.y + Math.sin(a) * r * 0.7;
+                this.angreifer.push({ x, y, x0: x, y0: y, t: 0 });
+            }
+            // Funken fliegen nach und nach ins Ei
+            for (let k = aufnehmen(z, dt, MAGIE); k > 0; k--) {
+                const i = this.kreis.findIndex(q => q.f >= 1);
+                if (i >= 0) { const p = this.kreisPos(this.kreis[i], t); this.kreis.splice(i, 1); this.teilchen.push({ x: p.x, y: p.y, vx: (e.x - p.x) * 2, vy: (e.y - p.y) * 2, leben: 0.5, art: 'funke' }); }
+            }
+            const s = stand(z, MAGIE);
+            if (s !== 'laeuft') this.ende(s);
+            this.zeige();
+        }
+        // Schatten fliegen zum Ei; am Ring: Treffer
         for (const a of this.angreifer) {
-            const dx = e.x - a.x, dy = e.y - a.y, l = Math.hypot(dx, dy) || 1;
-            a.x += dx / l * a.v * dt; a.y += dy / l * a.v * dt;
-            if (a.weg || l > Math.max(e.rx, e.ry) * 1.45) continue;
+            a.t += dt / FLUG;
+            const k = Math.min(1, a.t), ringK = 1 - (Math.max(e.rx, e.ry) * 1.4) / Math.max(this.w, this.h) / 0.6;
+            a.x = a.x0 + (e.x - a.x0) * k; a.y = a.y0 + (e.y - a.y0) * k;
+            if (k < ringK || a.weg) continue;
             a.weg = true;
-            if (this.zuLoeschen > 0 && this.kreis.length) {
-                this.zuLoeschen--;
+            if (!this.laeuft) continue;
+            if (treffer(z, MAGIE) === 'funke' && this.kreis.length) {
                 let best = 0, bestD = Infinity;
-                this.kreis.forEach((k, i) => { const p = this.kreisPos(k, t); const d = Math.hypot(p.x - a.x, p.y - a.y); if (d < bestD) { bestD = d; best = i; } });
+                this.kreis.forEach((q, i) => { const p = this.kreisPos(q, t); const d = Math.hypot(p.x - a.x, p.y - a.y); if (d < bestD) { bestD = d; best = i; } });
                 const p = this.kreisPos(this.kreis[best], t);
                 this.kreis.splice(best, 1);
                 for (let i = 0; i < 6; i++) this.glitzer(p.x, p.y, 'licht');
+            } else {
+                this.wurzel.classList.add('ei-wackelt');
+                setTimeout(() => this.wurzel.classList.remove('ei-wackelt'), 300);
             }
             for (let i = 0; i < 5; i++) this.glitzer(a.x, a.y, 'puff');
         }
         this.angreifer = this.angreifer.filter(a => !a.weg);
-        for (const p of this.lauernd) { p.x += Math.sin(t / 700 + p.y) * 10 * dt; p.y += Math.cos(t / 900 + p.x) * 10 * dt; }
+        if (this.kreis.length > z.n) this.kreis.length = Math.max(0, z.n);
         for (const p of this.teilchen) { p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= 0.97; p.vy *= 0.97; p.leben -= dt; }
         this.teilchen = this.teilchen.filter(p => p.leben > 0);
         for (const s of this.scherben) { s.t += dt; s.vy += 600 * dt; s.sx += s.vx * dt; s.sy += s.vy * dt; s.w += s.dreh * dt; }
@@ -236,7 +250,6 @@ export default class MagieStrom {
     zeichne(t) {
         const c = this.ctx, e = this.ei;
         c.clearRect(0, 0, this.w, this.h);
-        // Spielfigur neben dem Ei (hüpft vor Freude beim Schlüpfen)
         if (this.figurBild) {
             const f = this.figurPlatz, hops = this.drache ? Math.abs(Math.sin(t / 180)) * 14 : Math.sin(t / 500) * 2;
             const breite = f.h * this.figurBild.width / this.figurBild.height;
@@ -244,32 +257,31 @@ export default class MagieStrom {
         }
         c.globalCompositeOperation = 'lighter';
         const g = c.createRadialGradient(e.x, e.y, e.rx * 0.5, e.x, e.y, e.rx * 2);
-        g.addColorStop(0, `rgba(255,210,120,${Math.min(0.45, 0.1 + this.kreis.length / 200)})`);
+        g.addColorStop(0, `rgba(255,210,120,${Math.min(0.5, 0.08 + this.z.warm / MAGIE.ziel * 0.4)})`);
         g.addColorStop(1, 'rgba(255,210,120,0)');
         c.fillStyle = g; c.beginPath(); c.arc(e.x, e.y, e.rx * 2, 0, Math.PI * 2); c.fill();
-        // eigene Funken im Orbit mit kurzem Schweif; beim Wärmen fliegen sie ins Ei
+        // eigene Funken: groß und leuchtend, mit Schweif
+        const gr = Math.max(14, e.rx * 0.16);
         for (const k of this.kreis) {
-            if (k.f < 1) k.f = Math.min(1, k.f + 0.025);
-            if (this.insEi) k.r = Math.max(0.1, k.r - 0.03);
-            else if (k.r < 1.25) k.r += 0.01;
-            for (let s = 0; s < 3; s++) {
-                const p = this.kreisPos({ ...k, w: k.w - s * 0.06 / k.v }, t);
-                c.fillStyle = `rgba(255,200,90,${1 - s * 0.3})`;
-                c.beginPath(); c.arc(p.x, p.y, 3.4 - s, 0, Math.PI * 2); c.fill();
+            if (k.f < 1) k.f = Math.min(1, k.f + 0.02);
+            for (let s = 2; s >= 0; s--) {
+                const p = this.kreisPos({ ...k, w: k.w - s * 0.08 / k.v }, t), m = gr * (1 - s * 0.25) * (0.85 + Math.sin(t / 150 + k.w * 7) * 0.15);
+                c.globalAlpha = 1 - s * 0.3;
+                c.drawImage(this.punkt.funke, p.x - m, p.y - m, m * 2, m * 2);
             }
         }
+        c.globalAlpha = 1;
         for (const p of this.teilchen) {
-            c.fillStyle = p.art === 'puff' ? `rgba(200,170,255,${p.leben * 2})` : `rgba(255,255,255,${Math.min(1, p.leben * 3)})`;
-            c.beginPath(); c.arc(p.x, p.y, p.art === 'puff' ? 4 : 2, 0, Math.PI * 2); c.fill();
+            const m = (p.art === 'funke' ? gr : gr * 0.6) * Math.min(1, p.leben * 2);
+            c.drawImage(this.punkt[p.art] || this.punkt.licht, p.x - m, p.y - m, m * 2, m * 2);
         }
         c.globalCompositeOperation = 'source-over';
-        // Schatten-Funken: dunkle Wölkchen mit lila Rand
-        for (const p of [...this.lauernd, ...this.angreifer]) {
-            const gs = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, 12);
-            gs.addColorStop(0, 'rgba(40,20,70,0.95)'); gs.addColorStop(0.6, 'rgba(110,60,200,0.6)'); gs.addColorStop(1, 'rgba(110,60,200,0)');
-            c.fillStyle = gs; c.beginPath(); c.arc(p.x, p.y, 12, 0, Math.PI * 2); c.fill();
+        // Schatten: dunkle Wölkchen mit lila Rand
+        for (const p of this.angreifer) {
+            const r = gr * 0.9, gs = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+            gs.addColorStop(0, 'rgba(40,20,70,0.95)'); gs.addColorStop(0.6, 'rgba(110,60,200,0.55)'); gs.addColorStop(1, 'rgba(110,60,200,0)');
+            c.fillStyle = gs; c.beginPath(); c.arc(p.x, p.y, r, 0, Math.PI * 2); c.fill();
         }
-        // Risse mit Licht dahinter
         for (const linie of this.risse) {
             if (linie.length < 2) continue;
             c.lineCap = 'round'; c.lineJoin = 'round';
@@ -277,7 +289,6 @@ export default class MagieStrom {
             c.beginPath(); linie.forEach((p, i) => (i ? c.lineTo(p.x, p.y) : c.moveTo(p.x, p.y))); c.stroke();
             c.shadowBlur = 0; c.strokeStyle = '#3a2410'; c.lineWidth = 2.5; c.stroke();
         }
-        // Schalen-Stücke (aus dem Hintergrundbild ausgeschnitten)
         const b = this.hintergrund;
         for (const s of this.scherben) {
             c.save(); c.translate(s.sx, s.sy); c.rotate(s.w); c.globalAlpha = Math.max(0, 1 - s.t / 2);
@@ -287,18 +298,18 @@ export default class MagieStrom {
             else { c.fillStyle = '#3f9a5a'; c.fill(); }
             c.restore();
         }
-        // Babydrache hüpft aus dem Ei
         if (this.drache?.bild) {
             const k = Math.min(1, (performance.now() - this.drache.t0) / 600);
-            const gr = e.ry * 2.6 * k * (1 + Math.sin(k * Math.PI) * 0.25), wipp = Math.sin(performance.now() / 400) * 4;
-            c.save();
-            c.shadowColor = '#fff3b0'; c.shadowBlur = 40;
-            c.drawImage(this.drache.bild, e.x - gr / 2, e.y + e.ry * 0.9 - gr + wipp, gr, gr);
+            const d = e.ry * 2.6 * k * (1 + Math.sin(k * Math.PI) * 0.25), wipp = Math.sin(performance.now() / 400) * 4;
+            c.save(); c.shadowColor = '#fff3b0'; c.shadowBlur = 40;
+            c.drawImage(this.drache.bild, e.x - d / 2, e.y + e.ry * 0.9 - d + wipp, d, d);
             c.restore();
         }
     }
 
     beenden() {
+        this.laeuft = false;
+        this.antwort?.(-1);
         cancelAnimationFrame(this.lauf);
         removeEventListener('resize', this.groesse);
         clearTimeout(this.meldeZeit);

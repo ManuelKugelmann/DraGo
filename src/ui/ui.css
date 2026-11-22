@@ -20,6 +20,11 @@ body.kamera #kamera { display: block; }
     width: min(70vw, 280px); box-sizing: border-box; padding: 8px 14px; border-radius: 16px; border: 3px solid var(--gold);
     font: inherit; font-size: 22px; text-align: center; background: #2b1840cc; color: #fff; outline: none; user-select: text; }
 .name::placeholder { color: #fff9; }
+.alter { top: calc(max(6px, env(safe-area-inset-top)) + clamp(44px, 11vmin, 88px) + 52px); left: 50%; transform: translateX(-50%);
+    display: flex; gap: 6px; align-items: center; padding: 4px 8px; border-radius: 20px; background: #2b1840aa; }
+.alter span { font-size: 16px; margin-right: 4px; }
+.alter button { width: 34px; height: 34px; border-radius: 50%; font-size: 17px; font-weight: bold; background: #5b3f80; }
+.alter button.an { background: var(--gold); color: var(--dunkel); }
 
 .pfeil { top: 50%; width: 64px; height: 64px; border-radius: 50%; font-size: 28px;
     background: #2b1840cc; box-shadow: 0 4px 0 #0008; transform: translateY(-50%); }
@@ -53,7 +58,7 @@ body.ar-suchen .unten, body.ar-suchen .pfeil { visibility: hidden; }
 .los { padding: 12px 34px; border-radius: 22px; font-size: 28px; font-weight: bold;
     background: #2f9e5b; box-shadow: 0 5px 0 #145a30; }
 
-body.unterwegs .pfeil, body.unterwegs .unten, body.unterwegs .name { display: none; }
+body.unterwegs .pfeil, body.unterwegs .unten, body.unterwegs .name, body.unterwegs .alter { display: none; }
 
 .hinter-portal { inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
     padding-bottom: 8vh; background: #2b1840 center / cover; opacity: 0; transition: opacity 0.8s; }
@@ -74,6 +79,9 @@ body.drin #ui > .hinter-portal { opacity: 1; pointer-events: auto; }
     }
 @media (orientation: landscape) and (max-height: 500px) {
     .name { top: max(8px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left)); transform: none; width: 200px; font-size: 18px; }
+    .alter { top: calc(max(8px, env(safe-area-inset-top)) + 50px); left: max(12px, env(safe-area-inset-left)); transform: none; }
+    .alter span { display: none; }
+    .alter button { width: 28px; height: 28px; font-size: 14px; }
     .titel { font-size: 40px; }
     .tupfen { width: 28px; height: 28px; }
     .los { padding: 8px 26px; font-size: 24px; }
@@ -92,7 +100,13 @@ body.magie .nochmal { position: fixed; z-index: 5; top: max(10px, env(safe-area-
     padding: 4px 14px; border-radius: 14px; background: #24122fcc; color: var(--gold); }
 .magie-waerme { top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 8px;
     align-items: center; font-size: 24px; padding: 6px 12px; border-radius: 16px; background: #24122fcc; }
-.magie-balken { width: min(50vw, 320px); height: 18px; border-radius: 9px; background: #ffffff22; overflow: hidden; }
+.magie-uhr { width: min(18vw, 110px); height: 14px; border-radius: 7px; background: #ffffff22; overflow: hidden; }
+.magie-uhr::after { content: ''; display: block; height: 100%; width: calc(var(--wert, 1) * 100%); background: #9fe3ff; }
+.magie-nochmal { display: none; left: 50%; top: 58%; transform: translateX(-50%); padding: 12px 30px; border-radius: 22px;
+    font-size: 26px; font-weight: bold; background: #9b5cff; box-shadow: 0 5px 0 #4a2380; }
+#magie.verloren .magie-nochmal { display: block; }
+#magie.verloren { filter: saturate(0.5) brightness(0.8); }
+.magie-balken { width: min(40vw, 280px); height: 18px; border-radius: 9px; background: #ffffff22; overflow: hidden; }
 .magie-balken::after { content: ''; display: block; height: 100%; width: calc(var(--wert, 0) * 100%);
     background: linear-gradient(90deg, #ffb347, #ff6a3c); transition: width 0.6s; }
 .magie-tor { right: max(16px, env(safe-area-inset-right)); top: 50%; transform: translateY(-50%) scale(0.8); opacity: 0;
