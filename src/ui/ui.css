@@ -73,7 +73,12 @@ body.unterwegs .pfeil, body.unterwegs .unten, body.unterwegs .name, body.unterwe
 @keyframes funkeln { 0%, 100% { opacity: 0.2; scale: 0.6; rotate: 0deg; } 50% { opacity: 0.9; scale: 1; rotate: 45deg; } }
 .hinter-portal.gefunden .glitzer { display: none; }
 .nochmal { width: 60px; height: 60px; border-radius: 50%; font-size: 28px; background: #2b1840cc; }
-body.drin #ui > .hinter-portal { opacity: 1; pointer-events: auto; }
+body.drin #ui > .hinter-portal { opacity: 1; }
+body.drin .titel, body.drin .kamera-knopf, body.drin .ar-knopf { display: none; }
+.hinter-portal { background: none !important; justify-content: space-between; padding: 12px 0 max(16px, env(safe-area-inset-bottom)); }
+.hinter-portal .brueten { margin-top: auto; }
+body.drin .hinter-portal > * { pointer-events: auto; }
+.hinter-portal h2 { pointer-events: none; }
 
 @media (orientation: portrait) {
     }

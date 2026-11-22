@@ -13,7 +13,7 @@ export const TEXTE = {
     kamera_fehler: 'Kamera geht nicht – erlaubt?',
     ar: 'AR',
     ar_hinweis: 'Zeig auf den Boden und tippe!',
-    ei_suchen: 'Hier ist irgendwo dein Drachenei versteckt. Such es!',
+    ei_suchen: 'Hier ist irgendwo dein Drachenei versteckt. Tipp auf das Versteck!',
     ei_gefunden: 'Du hast dein erstes Drachenei gefunden!',
     nochmal: '↩',
     ausbrueten: 'Ausbrüten ✨',
@@ -37,8 +37,17 @@ export const FIGUREN = [
     { datei: 'rogue.glb' }
 ];
 
-// Wo das erste Ei versteckt ist (in Prozent vom Bild: links, oben).
-export const EI_VERSTECK = { links: 9, oben: 44 };
+// Höhle (2.5D): gemalte Teile an 3D-Positionen [x (links/rechts), y (hoch), z (vorne/hinten)] in Metern.
+// groesse = Höhe in Metern. versteck = dahinter liegt das Ei. ei = das Nest mit dem Ei.
+export const HOEHLE_TEILE = [
+    { bild: 'hoehle/fels.png', ort: [-3.4, 0, -5], groesse: 2.6 },
+    { bild: 'hoehle/kristalle.png', ort: [-2.6, 0, -2.2], groesse: 2.4 },
+    { bild: 'hoehle/pilze.png', ort: [-1.4, 0, 0.6], groesse: 0.8 },
+    { bild: 'hoehle/fels.png', ort: [4.2, 0, -6], groesse: 3 },
+    { bild: 'hoehle/nest.png', ort: [2.3, 0, -3.2], groesse: 1.7, ei: true },
+    { bild: 'hoehle/kristalle.png', ort: [2.1, 0, -2.4], groesse: 2.3, versteck: true },
+    { bild: 'hoehle/pilze.png', ort: [3.4, 0, 0.2], groesse: 0.7 }
+];
 
 // Natürliche Haarfarben zum Antippen: Original, schwarz, dunkelbraun, braun, hellbraun, blond, rot, grau.
 export const HAARFARBEN = [null, 0x1c1410, 0x3b2416, 0x6a4128, 0x9a6a3e, 0xd9b26a, 0xb5532a, 0xc9c4bc];

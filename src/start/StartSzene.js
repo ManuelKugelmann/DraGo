@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import Figur3D from './Figur3D.js';
 import Portal from './Portal.js';
+import Diorama from '../hoehle/Diorama.js';
 import { FIGUREN, HAARFARBEN } from '../daten.js';
 
 const PORTAL_Z = -6;
@@ -44,6 +45,11 @@ export default class StartSzene {
         this.portal.obj.position.set(0, 1.6, PORTAL_Z);
         this.welt.add(this.portal.obj);
 
+        // Höhle hinter dem Tor (2.5D-Diorama), erst nach dem Durchgehen sichtbar
+        this.hoehle = new Diorama();
+        this.welt.add(this.hoehle.obj);
+        this.strahl = new THREE.Raycaster();
+
         // AR: Ring auf dem erkannten Boden, dort wird das Tor hingestellt
         this.marke = new THREE.Mesh(new THREE.RingGeometry(0.12, 0.16, 32).rotateX(-Math.PI / 2),
             new THREE.MeshBasicMaterial({ color: 0xffd27a }));
@@ -74,7 +80,12 @@ export default class StartSzene {
         this.kamera.updateProjectionMatrix();
     }
 
-    async zeige(index, haarIndex) {
+    zeige(index, haarIndex) {
+        this.ladend = this.zeigeJetzt(index, haarIndex);
+        return this.ladend;
+    }
+
+    async zeigeJetzt(index, haarIndex) {
         if (!this.figuren[index]) this.figuren[index] = await Figur3D.laden('figuren/' + FIGUREN[index].datei);
         if (this.figur) this.welt.remove(this.figur.obj);
         this.figur = this.figuren[index];
@@ -97,7 +108,8 @@ export default class StartSzene {
     }
 
     los(fertig) {
-        if (!this.figur || this.laeuft) return;
+        if (!this.figur) { this.ladend?.then(() => this.los(fertig)); return; }   // Figur lädt noch
+        if (this.laeuft) return;
         clearTimeout(this.zurueck);
         this.drehZiel = Math.PI;
         this.laeuft = true;
@@ -105,7 +117,37 @@ export default class StartSzene {
         this.figur.spiele('Walking_A', { tempo: 1.3 });
     }
 
+    /** Nach dem Tor: Höhle zeigen, Figur steht vorne links, Kamera schaut in die Höhle. */
+    betreteHoehle() {
+        this.inHoehle = true;
+        this.portal.obj.visible = false;
+        this.hoehle.zuruecksetzen();
+        this.hoehle.obj.visible = true;
+        this.laeuft = false;
+        if (this.figur) {
+            this.figur.obj.visible = true;
+            this.figur.obj.position.set(-0.6, 0, 1.4);
+            this.drehZiel = Math.PI;
+            this.figur.spiele('Idle');
+        }
+        if (!this.renderer.xr.isPresenting) { this.kamera.position.set(0, 2.2, 6.5); this.blick.set(0, 1, -2.5); }
+    }
+
+    /** Antippen in der Höhle (Bildschirm-Koordinaten). true = Ei gefunden. */
+    tippe(x, y) {
+        if (!this.inHoehle) return false;
+        const r = this.renderer.domElement.getBoundingClientRect();
+        this.strahl.setFromCamera({ x: (x - r.left) / r.width * 2 - 1, y: -(y - r.top) / r.height * 2 + 1 }, this.kamera);
+        const ja = this.hoehle.tippe(this.strahl);
+        if (ja) this.figur?.spiele('Cheer', { einmal: true });
+        return ja;
+    }
+
     zuruecksetzen() {
+        this.inHoehle = false;
+        this.hoehle.obj.visible = false;
+        this.portal.obj.visible = true;
+        this.blick.set(0, 1.2, PORTAL_Z * 0.5);
         this.laeuft = false;
         if (!this.figur) return;
         this.figur.obj.position.set(0, 0, 0);
@@ -192,6 +234,7 @@ export default class StartSzene {
         this.uhr.update(zeit);
         const dt = Math.min(this.uhr.getDelta(), 0.05);
         this.portal.update(dt);
+        if (this.inHoehle) this.hoehle.update(dt, this.kamera);
         const f = this.figur;
         if (f) {
             f.update(dt);

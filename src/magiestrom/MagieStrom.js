@@ -256,10 +256,21 @@ export default class MagieStrom {
             c.drawImage(this.figurBild, f.x - breite / 2, f.y - f.h - hops, breite, f.h);
         }
         c.globalCompositeOperation = 'lighter';
-        const g = c.createRadialGradient(e.x, e.y, e.rx * 0.5, e.x, e.y, e.rx * 2);
-        g.addColorStop(0, `rgba(255,210,120,${Math.min(0.5, 0.08 + this.z.warm / MAGIE.ziel * 0.4)})`);
-        g.addColorStop(1, 'rgba(255,210,120,0)');
-        c.fillStyle = g; c.beginPath(); c.arc(e.x, e.y, e.rx * 2, 0, Math.PI * 2); c.fill();
+        // Feuer-Schein ums Ei: wächst mit der Wärme, flackert, wird von rot zu goldweiß
+        const w = Math.min(1, this.z.warm / MAGIE.ziel), flacker = 1 + Math.sin(t / 90) * 0.04 + Math.sin(t / 37) * 0.03;
+        const R = e.ry * (1.1 + w * 1.6) * flacker;
+        const g = c.createRadialGradient(e.x, e.y, e.rx * 0.6, e.x, e.y, R);
+        g.addColorStop(0, `rgba(255,${150 + w * 100 | 0},${60 + w * 120 | 0},${0.15 + w * 0.55})`);
+        g.addColorStop(0.6, `rgba(255,${90 + w * 80 | 0},40,${0.1 + w * 0.3})`);
+        g.addColorStop(1, 'rgba(255,80,30,0)');
+        c.fillStyle = g; c.beginPath(); c.ellipse(e.x, e.y, R * 0.85, R, 0, 0, Math.PI * 2); c.fill();
+        // kleine Flammen-Zungen am Rand, mehr bei mehr Wärme
+        for (let i = 0; i < Math.round(w * 18); i++) {
+            const a = i / 18 * Math.PI * 2 + t / 900, h = R * (0.92 + Math.sin(t / 120 + i * 2.1) * 0.08), m = e.rx * 0.22 * (0.6 + w);
+            c.globalAlpha = 0.35 + w * 0.4;
+            c.drawImage(this.punkt.funke, e.x + Math.cos(a) * h * 0.85 - m, e.y + Math.sin(a) * h - m, m * 2, m * 2);
+        }
+        c.globalAlpha = 1;
         // eigene Funken: groß und leuchtend, mit Schweif
         const gr = Math.max(14, e.rx * 0.16);
         for (const k of this.kreis) {

@@ -1,5 +1,5 @@
 // Knöpfe und Eingaben über dem 3D-Bild: Name, Figur, Haarfarbe, Kamera, Los.
-import { TEXTE, FIGUREN, HAARFARBEN, EI_VERSTECK } from '../daten.js';
+import { TEXTE, FIGUREN, HAARFARBEN } from '../daten.js';
 import { kameraAn, kameraAus } from './kamera.js';
 import { arMoeglich, arSitzung } from './ar.js';
 import MagieStrom from '../magiestrom/MagieStrom.js';
@@ -111,16 +111,12 @@ export function baueStartUi(szene, leinwand) {
     const unten = el('div', 'unten');
     unten.append(farben, los);
 
-    // Hinter dem Tor: Höhle, das Ei ist versteckt. Nur ein Glitzern verrät es.
+    // Hinter dem Tor: 3D-Höhle (Diorama), das Ei ist hinter einem Kristall versteckt.
     const hinter = el('div', 'hinter-portal');
     const text = el('h2', '');
-    const glitzer = el('button', 'glitzer', '✨');
-    glitzer.style.left = EI_VERSTECK.links + '%';
-    glitzer.style.top = EI_VERSTECK.oben + '%';
-    glitzer.setAttribute('aria-label', 'Glitzern');
     const nochmal = el('button', 'nochmal', TEXTE.nochmal);
     const brueten = el('button', 'brueten', TEXTE.ausbrueten);
-    hinter.append(glitzer, text, brueten, nochmal);
+    hinter.append(text, brueten, nochmal);
     const magieEbene = el('div', '');
     magieEbene.id = 'magie';
     magieEbene.style.backgroundImage = 'url(img/splash.webp)';
@@ -132,12 +128,11 @@ export function baueStartUi(szene, leinwand) {
     };
     const mitName = t => (wahl.name ? `${wahl.name}, ${t[0].toLowerCase()}${t.slice(1)}` : t);
     const zeigeHoehle = () => {
-        hinter.style.backgroundImage = 'url(img/hoehle.webp)';
+        szene.betreteHoehle();
         hinter.classList.remove('gefunden');
         text.textContent = TEXTE.ei_suchen;
     };
-    glitzer.onclick = () => {
-        hinter.style.backgroundImage = 'url(img/splash.webp)';
+    const eiGefunden = () => {
         hinter.classList.add('gefunden');
         text.textContent = mitName(TEXTE.ei_gefunden);
     };
@@ -155,7 +150,10 @@ export function baueStartUi(szene, leinwand) {
         szene.zuruecksetzen();
     };
 
-    leinwand.addEventListener('pointerdown', () => szene.winken());
+    leinwand.addEventListener('pointerdown', e => {
+        if (document.body.classList.contains('drin')) { if (szene.tippe(e.clientX, e.clientY)) eiGefunden(); }
+        else szene.winken();
+    });
     ui.append(titel, name, alter, links, rechts, kamera, ar, arHinweis, meldung, unten, hinter, magieEbene);
     szene.zeige(wahl.figur, wahl.haar);
 }

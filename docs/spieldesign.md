@@ -13,7 +13,8 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 - Namen eingeben, Figur mit ◀ ▶ wählen (4 niedliche Figuren, keine Klassen), natürliche Haarfarben.
 - 📷 wechselt: Rückkamera → Frontkamera → aus. **AR** (nur Android Chrome): Boden antippen, Tor steht dort fest.
 - Figur antippen: dreht sich um und jubelt. **Los!**: läuft durchs Tor in eine Höhle.
-- In der Höhle ist das Ei **versteckt**, nur ein Glitzern verrät es. Antippen = gefunden.
+- Hinter dem Tor: **Höhle als 2.5D-Diorama** (gemalte Teile an 3D-Positionen). Das Ei ist hinter einem Kristall
+  versteckt, ein Glitzern verrät es. Kristall antippen: er rutscht zur Seite, das Nest ist da.
 - **Alter** am Start wählen (6–12): Aufgaben passen sich an (Klasse 1: bis 20, 2er/5er/10er; Englisch ab Klasse 3).
 - **Ausbrüten (Magiestrom, Echtzeit, 90 s):** Deine Figur steht neben dem Ei. Gelöste Aufgaben schicken Funken zum Ei, sie kreisen
   darum. Schatten-Funken kommen von außen, jeder Treffer löscht einen eigenen Funken. Der Rest wärmt das Ei.
@@ -22,6 +23,7 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 
 ## Entscheidungen
 
+- 2026-11-22: **Feuer-Schein ums Ei wächst mit der Wärme.**
 - 2026-11-22: Magiestrom **in Echtzeit**: ständiger Schatten-Strom, **gegen die Zeit**, man **kann verlieren** und muss
   nochmal versuchen. Figuren: **normale Schüler**, **Junge und Mädchen** (kommt mit dem Pupil-Rig).
 - 2026-11-22: **Alter am Anfang fragen**; Schwierigkeit der Aufgaben nach **Alter / Klasse**.
