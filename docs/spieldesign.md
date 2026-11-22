@@ -15,6 +15,9 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 ## Entscheidungen
 
 - 2026-11-22: **Nach der Figurenwahl** sieht man **das Portal**.
+- 2026-11-22 (Vorschlag): Bei der Auswahl sieht man die Figur **von hinten**, davor das Portal.
+  Dann **läuft sie vorwärts durch das Portal**. Hintergrund: **Kamera / AR**.
+- 2026-11-22: **3D mit three.js** ist ok. Figuren sollen **echter** aussehen.
 - 2026-11-22: **Eier und Drachen** haben verschiedene **Seltenheits- und Stärke-Stufen**.
 - 2026-11-22: **Spielfigur im Startbild wählen**, Anime-Stil, ein paar Varianten, **Haarfarbe wählbar**.
   Erst Platzhalter.
