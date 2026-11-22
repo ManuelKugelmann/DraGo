@@ -88,7 +88,7 @@ body.magie #ui > #magie { display: block; }
 body.magie .nochmal { position: fixed; z-index: 5; top: max(10px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left)); }
 #magie > * { position: absolute; }
 .magie-leinwand { inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.magie-zahl { left: 14%; top: calc(55% + 70px); transform: translateX(-50%); font-size: 26px; font-weight: bold;
+.magie-zahl { right: max(14px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); font-size: 26px; font-weight: bold;
     padding: 4px 14px; border-radius: 14px; background: #24122fcc; color: var(--gold); }
 .magie-waerme { top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 8px;
     align-items: center; font-size: 24px; padding: 6px 12px; border-radius: 16px; background: #24122fcc; }
@@ -108,8 +108,9 @@ body.magie .nochmal { position: fixed; z-index: 5; top: max(10px, env(safe-area-
 .magie-hinweis.zeigen { opacity: 1; }
 .magie-hinweis.gut { color: #9dffb0; }
 .magie-hinweis.naja { color: var(--gold); }
-.magie-hinweis.gross { font-size: 40px; top: 40%; }
+.magie-hinweis.gross { font-size: clamp(26px, 7vmin, 44px); top: 12%; white-space: normal; max-width: 90vw; text-align: center; }
 #magie.ei-wackelt { animation: wackeln 0.5s; }
+#magie.blitz { filter: brightness(2.2); transition: filter 0.1s; }
 #magie.schluepft { animation: wackeln 0.3s 5, blitz 1.8s forwards; }
 @keyframes wackeln { 25% { background-position: calc(50% - 4px) 50%; } 75% { background-position: calc(50% + 4px) 50%; } }
 @keyframes blitz { 80% { filter: brightness(1); } 90% { filter: brightness(3); } 100% { filter: brightness(1.1); } }

@@ -43,7 +43,8 @@ export const HAARFARBEN = [null, 0x1c1410, 0x3b2416, 0x6a4128, 0x9a6a3e, 0xd9b26
 // Magiestrom-Spiel (Ei ausbrüten).
 // start = Funken am Anfang, ziel = Wärme zum Schlüpfen, bonus = mal so viel bei richtiger Antwort,
 // schatten_start / schatten_plus = Schatten-Funken in der ersten Runde / mehr pro Runde.
-export const MAGIE = { start: 3, ziel: 60, bonus: 2, schatten_start: 2, schatten_plus: 2 };
+// sterne = Sekunden bis zum Schlüpfen für ⭐⭐⭐ und ⭐⭐ (schneller = stärkerer Drache).
+export const MAGIE = { start: 3, ziel: 60, bonus: 2, schatten_start: 2, schatten_plus: 2, sterne: [90, 180] };
 
 // Vokabeln für Frage-Tore (deutsch -> englisch). Einfach Zeilen dazuschreiben!
 export const VOKABELN = [
@@ -52,9 +53,12 @@ export const VOKABELN = [
     { de: 'Freund', en: 'friend' }, { de: 'Wasser', en: 'water' }, { de: 'Feuer', en: 'fire' }, { de: 'Stern', en: 'star' }
 ];
 
-// Drachen-Arten. Der Mehrspieler schickt nur diese Namen übers Netz.
+// Drachen-Arten: schlüpfen zufällig. bild = Datei in public/drachen/.
+// Der Mehrspieler schickt nur diese Namen übers Netz.
 export const DRACHEN = {
-    baby: { name: 'Babydrache', farbe: 0x6cbf4a }
+    feuer: { name: 'Feuer-Drache', bild: 'drachen/feuer.png' },
+    sturm: { name: 'Sturm-Drache', bild: 'drachen/sturm.png' },
+    rune: { name: 'Runen-Drache', bild: 'drachen/rune.png' }
 };
 
 // Emotes: kleine Bilder, die Freunde sehen. Kein freier Text (Sicherheit).

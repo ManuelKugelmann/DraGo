@@ -34,6 +34,7 @@ export default class StartSzene {
         const boden = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({ opacity: 0.3 }));
         boden.rotation.x = -Math.PI / 2;
         boden.receiveShadow = true;
+        this.boden = boden;
         // Alles, was in AR auf den echten Boden gestellt wird
         this.welt = new THREE.Group();
         this.scene.add(this.welt);
@@ -111,6 +112,29 @@ export default class StartSzene {
         this.figur.obj.visible = true;
         this.figur.spiele('Idle');
         this.kamera.position.set(...START_KAMERA);
+    }
+
+    /** Bild der eigenen Figur (von schräg vorne, durchsichtiger Hintergrund), z. B. fürs Ausbrüten. */
+    async figurBild(breite = 300, hoehe = 480) {
+        if (!this.figur) return null;
+        const f = this.figur.obj, alt = { dreh: f.rotation.y, pos: f.position.clone(), sicht: f.visible };
+        const r = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
+        r.setSize(breite, hoehe);
+        r.outputColorSpace = THREE.SRGBColorSpace;
+        const cam = new THREE.PerspectiveCamera(30, breite / hoehe, 0.1, 20);
+        cam.position.set(0, 0.85, 3.6);
+        cam.lookAt(0, 0.78, 0);
+        f.rotation.y = 0.4; f.position.set(0, 0, 0); f.visible = true;
+        this.portal.obj.visible = false; this.boden.visible = false;
+        r.render(this.scene, cam);
+        const url = r.domElement.toDataURL('image/png');
+        f.rotation.y = alt.dreh; f.position.copy(alt.pos); f.visible = alt.sicht;
+        this.portal.obj.visible = true; this.boden.visible = true;
+        r.dispose();
+        const bild = new Image();
+        bild.src = url;
+        await bild.decode().catch(() => {});
+        return bild;
     }
 
     // ---------- AR (WebXR, Android Chrome) ----------

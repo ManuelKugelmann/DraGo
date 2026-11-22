@@ -113,8 +113,8 @@ export function baueStartUi(szene, leinwand) {
     magieEbene.id = 'magie';
     magieEbene.style.backgroundImage = 'url(img/splash.webp)';
     let magie = null;
-    brueten.onclick = () => {
-        magie = new MagieStrom(magieEbene);
+    brueten.onclick = async () => {
+        magie = new MagieStrom(magieEbene, await szene.figurBild());
         document.body.classList.add('magie');
         magie.spielen();
     };

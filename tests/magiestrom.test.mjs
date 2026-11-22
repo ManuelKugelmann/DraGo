@@ -49,3 +49,25 @@ test('Schatten löschen aus, bei 0 neue Start-Funken', () => {
     assert.deepEqual(nachSchatten(10, 4), { geloescht: 4, uebrig: 6, weiter: 6 });
     assert.deepEqual(nachSchatten(3, 5), { geloescht: 3, uebrig: 0, weiter: 3 });
 });
+
+test('Stärke: schneller = mehr Sterne', async () => {
+    const { staerke } = await import('../src/magiestrom/regeln.js');
+    assert.equal(staerke(60), 3);
+    assert.equal(staerke(90), 3);
+    assert.equal(staerke(120), 2);
+    assert.equal(staerke(500), 1);
+    assert.equal(staerke(10, [5, 20]), 2);
+});
+
+test('Plus/Minus und Zufalls-Tor: richtige Antwort ist dabei', async () => {
+    const { plusMinusTor, zufallsTor } = await import('../src/magiestrom/regeln.js');
+    for (let i = 0; i < 100; i++) {
+        const t = plusMinusTor();
+        const [a, op, b] = t.frage.split(' ');
+        const r = op === '+' ? Number(a) + Number(b) : Number(a) - Number(b);
+        assert.equal(Number(t.optionen[t.richtig]), r);
+        assert.ok(r >= 0 && r <= 100);
+        const z = zufallsTor(5, [{ de: 'Hund', en: 'dog' }, { de: 'Katze', en: 'cat' }, { de: 'Haus', en: 'house' }]);
+        assert.ok(z.richtig >= 0);
+    }
+});

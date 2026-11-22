@@ -47,6 +47,29 @@ export function rechenTor(rnd = Math.random) {
     return { art: 'frage', frage: `${a} · ${b} = ?`, optionen: optionen.map(String), richtig: optionen.indexOf(r) };
 }
 
+/** Plus- oder Minus-Aufgabe bis 100 mit 3 Antworten. */
+export function plusMinusTor(rnd = Math.random) {
+    const plus = rnd() < 0.5;
+    const a = ganz(rnd, 10, 90), b = ganz(rnd, 2, plus ? 100 - a : a - 1);
+    const r = plus ? a + b : a - b;
+    const falsch = new Set();
+    for (const f of mische([r + 10, r - 10, r + 1, r - 1, r + 2], rnd)) {
+        if (f >= 0 && f !== r) falsch.add(f);
+        if (falsch.size === 2) break;
+    }
+    const optionen = mische([r, ...falsch], rnd);
+    return { art: 'frage', frage: `${a} ${plus ? '+' : '−'} ${b} = ?`, optionen: optionen.map(String), richtig: optionen.indexOf(r) };
+}
+
+/** Zufälliges Tor: Schätzen, Einmaleins, Plus/Minus oder Vokabel. */
+export function zufallsTor(n, vokabeln, rnd = Math.random) {
+    const art = Math.floor(rnd() * 4);
+    if (art === 0) return schaetzTor(n, rnd);
+    if (art === 1) return rechenTor(rnd);
+    if (art === 2) return plusMinusTor(rnd);
+    return vokabelTor(vokabeln, rnd);
+}
+
 /** Vokabel-Frage: deutsches Wort -> englisches Wort, 3 Antworten. */
 export function vokabelTor(vokabeln, rnd = Math.random) {
     const [v, ...rest] = mische(vokabeln, rnd);
@@ -67,4 +90,12 @@ export const schatten = (r, start = 2, plus = 2) => start + r * plus;
 export function nachSchatten(n, s, startFunken = 3) {
     const uebrig = Math.max(0, n - s);
     return { geloescht: Math.min(n, s), uebrig, weiter: uebrig > 0 ? uebrig : startFunken };
+}
+
+/** Stärke des Drachen (1..3 Sterne): je schneller das Ei warm war, desto stärker.
+ *  grenzen = Sekunden für 3 und 2 Sterne, z. B. [90, 180]. */
+export function staerke(sekunden, grenzen = [90, 180]) {
+    if (sekunden <= grenzen[0]) return 3;
+    if (sekunden <= grenzen[1]) return 2;
+    return 1;
 }
