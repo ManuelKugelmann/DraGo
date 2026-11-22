@@ -13,7 +13,8 @@ export const TEXTE = {
     kamera_fehler: 'Kamera geht nicht – erlaubt?',
     ar: 'AR',
     ar_hinweis: 'Zeig auf den Boden und tippe!',
-    hinter_portal: 'Dein erstes Drachenei!',
+    ei_suchen: 'Hier ist irgendwo dein Drachenei versteckt. Such es!',
+    ei_gefunden: 'Du hast dein erstes Drachenei gefunden!',
     nochmal: '↩'
 };
 
@@ -27,6 +28,9 @@ export const FIGUREN = [
 ];
 
 // Natürliche Haarfarben zum Antippen: Original, schwarz, dunkelbraun, braun, hellbraun, blond, rot, grau.
+// Wo das erste Ei versteckt ist (in Prozent vom Bild: links, oben).
+export const EI_VERSTECK = { links: 9, oben: 44 };
+
 export const HAARFARBEN = [null, 0x1c1410, 0x3b2416, 0x6a4128, 0x9a6a3e, 0xd9b26a, 0xb5532a, 0xc9c4bc];
 
 // Drachen-Arten. Der Mehrspieler schickt nur diese Namen übers Netz.

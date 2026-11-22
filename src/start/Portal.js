@@ -1,5 +1,5 @@
 // Ring-Tor: Steinring mit Leucht-Winkeln und drehendem Runen-Ring,
-// innen eine schimmernde Wasser-Oberfläche, durch die man die Höhle mit dem Ei sieht.
+// innen eine schimmernde Wasser-Oberfläche, durch die man die Höhle sieht (das Ei ist versteckt).
 import * as THREE from 'three';
 
 const WINKEL = 7;              // Leucht-Winkel am Ring
@@ -49,13 +49,13 @@ export default class Portal {
                 wasser: { value: WASSER }
             }
         });
-        new THREE.TextureLoader().load('img/splash.webp', t => {
+        new THREE.TextureLoader().load('img/hoehle.webp', t => {
             t.colorSpace = THREE.SRGBColorSpace;
-            // Quadratischer Ausschnitt um das Ei
+            // Quadratischer Ausschnitt: Höhlengang in der Bildmitte
             const wdh = new THREE.Vector2(0.8 * 768 / 1344, 0.8);
             this.wasser.uniforms.bild.value = t;
             this.wasser.uniforms.bildWdh.value = wdh;
-            this.wasser.uniforms.bildVers.value = new THREE.Vector2(0.5 - wdh.x / 2, 0.02);
+            this.wasser.uniforms.bildVers.value = new THREE.Vector2(0.5 - wdh.x / 2, 0.15);
         });
         this.obj.add(new THREE.Mesh(new THREE.CircleGeometry(radius, 64), this.wasser));
 

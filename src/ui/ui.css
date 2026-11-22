@@ -41,10 +41,7 @@ body.ar { background: transparent; }
 .meldung.zeigen { opacity: 1; }
 .ar-hinweis { top: 40%; left: 50%; transform: translateX(-50%); display: none; pointer-events: none; font-size: 24px;
     padding: 8px 18px; border-radius: 16px; background: #24122fcc; white-space: nowrap; }
-body.ar-suchen .meldung { top: 45%; left: 50%; transform: translateX(-50%); pointer-events: none; opacity: 0; transition: opacity 0.3s;
-    font-size: 22px; padding: 8px 18px; border-radius: 16px; background: #8a1f1fdd; white-space: nowrap; }
-.meldung.zeigen { opacity: 1; }
-.ar-hinweis { display: block; }
+body.ar-suchen .ar-hinweis { display: block; }
 body.ar-suchen .unten, body.ar-suchen .pfeil { visibility: hidden; }
 
 .unten { left: 0; right: 0; bottom: max(10px, env(safe-area-inset-bottom)); display: flex; align-items: center;
@@ -63,6 +60,13 @@ body.unterwegs .pfeil, body.unterwegs .unten, body.unterwegs .name { display: no
 #ui > .hinter-portal { pointer-events: none; }
 .hinter-portal h2 { margin: 0 0 16px; font-size: clamp(24px, 6vmin, 44px); color: var(--gold); text-align: center;
     text-shadow: 0 3px 0 #6b2a0c; padding: 6px 18px; border-radius: 18px; background: #24122fcc; }
+.glitzer { position: absolute; z-index: 1; transform: translate(-50%, -50%); width: 64px; height: 64px; font-size: 0;
+    border-radius: 50%; animation: funkeln 2.2s ease-in-out infinite;
+    background: radial-gradient(circle, #fff 0 6%, #ffe9a0aa 14%, transparent 45%),
+                linear-gradient(90deg, transparent 47%, #fff8 50%, transparent 53%),
+                linear-gradient(0deg, transparent 47%, #fff8 50%, transparent 53%); }
+@keyframes funkeln { 0%, 100% { opacity: 0.2; scale: 0.6; rotate: 0deg; } 50% { opacity: 0.9; scale: 1; rotate: 45deg; } }
+.hinter-portal.gefunden .glitzer { display: none; }
 .nochmal { width: 60px; height: 60px; border-radius: 50%; font-size: 28px; background: #2b1840cc; }
 body.drin #ui > .hinter-portal { opacity: 1; pointer-events: auto; }
 
