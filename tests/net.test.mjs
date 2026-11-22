@@ -18,9 +18,9 @@ test('Würfeln gibt drei verschiedene bekannte Wörter', () => {
 });
 
 test('Zustand: gültig wird durchgelassen, Unsinn nicht', () => {
-    assert.deepEqual(cleanState({ x: 0.5, y: 2, typ: 'feuer', n: 3.7, text: 'hallo' }), { x: 0.5, y: 1, typ: 'feuer', n: 3 });
+    assert.deepEqual(cleanState({ x: 0.5, y: 2, typ: 'baby', n: 3.7, text: 'hallo' }), { x: 0.5, y: 1, typ: 'baby', n: 3 });
     assert.equal(cleanState({ x: 0.5, y: 0.5, typ: 'boese', n: 1 }), null);
-    assert.equal(cleanState({ x: 'a', y: 0.5, typ: 'feuer', n: 1 }), null);
+    assert.equal(cleanState({ x: 'a', y: 0.5, typ: 'baby', n: 1 }), null);
     assert.equal(cleanState({ x: 0.5, y: 0.5, typ: 'toString', n: 1 }), null);
     assert.equal(cleanState('quatsch'), null);
 });

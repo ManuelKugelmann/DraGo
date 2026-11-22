@@ -4,14 +4,8 @@ Ein Drachen-Spiel für Kinder. Läuft im Browser und lässt sich als App install
 
 **Spielen:** https://manuelkugelmann.github.io/DraGo/
 
-- Drachen wählen, in der Höhle herumlaufen (auf den Boden tippen).
-- Knöpfe unten: Emotes, 🔥 = Feuer-Atem.
-- **Freunde:** gleiche drei Wörter eingeben = gleiche Höhle. Kein Chat, keine Anmeldung.
-
-## Mitmachen
-
-Texte, Drachen und Farben stehen in [`src/daten.js`](src/daten.js). Ideen und Entscheidungen:
-[`docs/spieldesign.md`](docs/spieldesign.md).
+Im Moment gibt es nur das Startbild. Was als Nächstes kommt, entscheiden die Spiel-Designer:
+[`docs/spieldesign.md`](docs/spieldesign.md). Texte und Farben: [`src/daten.js`](src/daten.js).
 
 ```bash
 npm install
@@ -21,4 +15,4 @@ npm run build
 ```
 
 Jeder Branch wird automatisch unter `/DraGo/<branch>/` veröffentlicht.
-Herkunft der Bilder und Töne: [`CREDITS.md`](CREDITS.md).
+Herkunft der Bilder: [`CREDITS.md`](CREDITS.md).

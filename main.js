@@ -1,12 +1,12 @@
 import Phaser from 'phaser';
-import Hoehle from './src/Hoehle.js';
+import Start from './src/Start.js';
 
 new Phaser.Game({
     type: Phaser.AUTO,
     parent: 'app',
     backgroundColor: '#1a0f2a',
-    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1280, height: 720 },
-    scene: [Hoehle]
+    scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
+    scene: [Start]
 });
 
 console.info(`DraGo ${__VERSION__} (${__BUILD__})`);

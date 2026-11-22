@@ -47,13 +47,13 @@ Ideen. Was die Kinder entscheiden, gilt.
 - Kleine Dateien, eine Aufgabe pro Datei, kein toter Code.
 
 ```
-main.js            Phaser-Start
+main.js            Phaser-Start (Scale RESIZE: quer und hoch)
 src/daten.js       Texte, Drachen, Farben (Kinder ändern hier)
-src/Drache.js      Drache aus Formen (Container + Graphics)
-src/Hoehle.js      Szene: Höhle, eigener Drache, Freunde
-src/ui/            DOM-Knöpfe (HUD), Raum-Dialog, CSS
-src/net/           Netz (Trystero), geheim (Raumname), schluessel (PBKDF2), nachricht (Prüfung)
-public/            manifest.json, sfx/, img/
+src/Start.js       Startbild: Bild, Titel, Glitzer
+src/ui/ui.css      Seiten-Stil
+src/net/           Mehrspieler, fertig aber noch nicht eingebaut: Netz (Trystero),
+                   geheim (Raumname), schluessel (PBKDF2), nachricht (Prüfung)
+public/            manifest.json, img/
 scripts/           gen-icons.mjs, serve.mjs
 tests/             node --test
 ```
@@ -76,5 +76,5 @@ npm test
 
 ## Prüfen
 
-Build + Tests grün, dann im Browser ansehen (Desktop quer + Handy-Emulation). Mehrspieler:
-zwei Tabs mit `?anon`, gleicher Raumname -> zweiter Drache erscheint.
+Build + Tests grün, dann im Browser ansehen (Desktop quer + Handy-Emulation). Mehrspieler (wenn eingebaut):
+zwei Tabs mit `?anon`, gleicher Raumname. Altes Beispiel mit Höhle + Freunden: Commit `11c5823`.
