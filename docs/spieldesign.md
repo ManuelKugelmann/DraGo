@@ -13,6 +13,9 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 
 ## Entscheidungen
 
+- 2026-11-22: **Intro in AR:** echtes Kamerabild, darüber ein Portal. Man geht zum Portal und betritt
+  die magische Welt (gezeichnet / 3D). Technik: WebXR auf Android Chrome; iPhone braucht einen
+  Ersatz (Kamerabild + Handy-Drehung, ohne Hingehen).
 - 2026-11-22: Die **Drachenhöhle** erreicht man durch ein **geheimes Portal**.
 - 2026-11-22: Das **Handy ist ein Fenster** in diese Welt. Manchmal sieht man die **eigene Spielfigur
   von außen** (3rd Person).
