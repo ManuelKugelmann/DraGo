@@ -50,6 +50,13 @@ export const HOEHLE_TEILE = [
     { bild: 'hoehle/pilze.png', ort: [3.4, 0, 0.2], groesse: 0.7 }
 ];
 
+// Gemalte Schüler (Test mit ?rig in der Adresse): ◀ ▶ wechselt zwischen ihnen.
+// variante = 'maedchen' oder 'junge', jacke = Farbe der Jacke.
+export const SCHUELER = [
+    { variante: 'maedchen', jacke: 0x28507a },
+    { variante: 'junge', jacke: 0x3f7a4f }
+];
+
 // Natürliche Haarfarben zum Antippen: Original, schwarz, dunkelbraun, braun, hellbraun, blond, rot, grau.
 export const HAARFARBEN = [null, 0x1c1410, 0x3b2416, 0x6a4128, 0x9a6a3e, 0xd9b26a, 0xb5532a, 0xc9c4bc];
 

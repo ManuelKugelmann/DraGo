@@ -55,6 +55,8 @@ src/start/haar.js       Haar-Farbfeld umfärben (rein, getestet)
 src/start/Portal.js     Ring-Tor mit Wasser-Shader
 src/start/startUi.js    Name, Pfeile, Haarfarben, Kamera, Los
 src/start/kamera.js     Kamerabild als Hintergrund (hinten/vorne)
+src/start/RigFigur.js   ?rig: gemalte 3D-Schüler-Puppe statt KayKit (KayKit-Knochen steuern sie)
+src/rig/                Puppe (Chat-B-Stil): retarget.js (rein, getestet), Pupil.js, teile.js, material.js, physik.js, gesicht.js
 src/start/ar.js         WebXR-AR: Tor auf echten Boden stellen (Android Chrome)
 src/hoehle/Diorama.js   Höhle als 2.5D-Diorama (gemalte Tafeln, Teile in daten.js HOEHLE_TEILE)
 src/magiestrom/          Ei ausbrüten: regeln.js (rein, getestet), MagieStrom.js (Grafik)

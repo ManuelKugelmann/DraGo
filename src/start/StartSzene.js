@@ -4,13 +4,15 @@ import * as THREE from 'three';
 import Figur3D from './Figur3D.js';
 import Portal from './Portal.js';
 import Diorama from '../hoehle/Diorama.js';
-import { FIGUREN, HAARFARBEN } from '../daten.js';
+import RigFigur from './RigFigur.js';
+import { FIGUREN, HAARFARBEN, SCHUELER } from '../daten.js';
 
 const PORTAL_Z = -6;
 const LAUF_TEMPO = 2.6;      // Meter pro Sekunde beim Losgehen
 const DREH_TEMPO = 8;        // wie schnell die Figur sich umdreht
 const START_KAMERA = [0, 1.9, 5.2];
 const AR_MASSSTAB = 0.35;    // in AR: Figur ca. 50 cm, Tor ca. 2 m entfernt
+const MIT_RIG = new URLSearchParams(location.search).has('rig');   // gemalte Puppe statt 3D-Figur
 
 export default class StartSzene {
     constructor(leinwand) {
@@ -94,9 +96,13 @@ export default class StartSzene {
         this.figur.obj.visible = true;
         this.figur.setHaar(HAARFARBEN[haarIndex]);
         this.welt.add(this.figur.obj);
+        if (MIT_RIG) (this.rig ??= new RigFigur()).nutze(this.figur, HAARFARBEN[haarIndex], SCHUELER[index % SCHUELER.length]);
     }
 
-    setHaar(haarIndex) { this.figur?.setHaar(HAARFARBEN[haarIndex]); }
+    setHaar(haarIndex) {
+        this.figur?.setHaar(HAARFARBEN[haarIndex]);
+        this.rig?.setHaar(HAARFARBEN[haarIndex]);
+    }
 
     /** Figur dreht sich zu dir um, jubelt und dreht sich wieder zum Portal. */
     winken() {
@@ -254,6 +260,7 @@ export default class StartSzene {
             }
         }
         if (!ar) this.kamera.lookAt(this.blick);
+        this.rig?.update(dt);
         this.renderer.render(this.scene, this.kamera);
     }
 }
