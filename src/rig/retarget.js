@@ -20,7 +20,7 @@ export const MASS = {
     oberschenkel: 50, unterschenkel: 50,
     fussLaenge: 14,
     knoechel: 6,      // Knöchel über dem Boden
-    armSenken: [0.8, 0.5]   // KayKit hält die kurzen Arme weit ab: Ober-/Unterarm etwas nach unten ziehen
+    armSenken: [0.8, 0.5]   // KayKit hält die kurzen Arme weit ab: hängende Ober-/Unterarme etwas nach unten ziehen
 };
 
 const sub = (a, b) => ({ x: a.x - b.x, y: a.y - b.y, z: a.z - b.z });
@@ -62,7 +62,8 @@ export function retarget(k, bodenFuss) {
 
     const arm = (s, seite) => {
         const schulter = add(schulterMitte, mal(schulterAchse, seite * MASS.schulterBreite));
-        const senke = (d, f) => einheit(add(d, mal(UNTEN, f)), d);
+        // nur hängende Arme senken, gehobene (Jubeln) bleiben oben
+        const senke = (d, f) => einheit(add(d, mal(UNTEN, f * Math.max(0, Math.min(1, d.y * 1.5)))), d);
         const ellbogen = add(schulter, mal(senke(richtung(k['upperarm_' + s], k['lowerarm_' + s], UNTEN), MASS.armSenken[0]), MASS.oberarm));
         const hand = add(ellbogen, mal(senke(richtung(k['lowerarm_' + s], k['wrist_' + s], UNTEN), MASS.armSenken[1]), MASS.unterarm));
         return { schulter, ellbogen, hand };

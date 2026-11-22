@@ -79,6 +79,13 @@ test('Hängende Arme werden zum Körper gezogen (Hand unter dem Ellbogen)', () =
     assert.ok(g.arme[1].hand.y > g.arme[1].ellbogen.y + 10);
 });
 
+test('Schräg gehobene Arme (Jubeln) bleiben über der Schulter', () => {
+    const k = stehend();
+    k.lowerarm_l = { x: 0.35, y: 1.1, z: 0 }; k.wrist_l = { x: 0.45, y: 1.3, z: 0 };   // 45° nach oben
+    const a = retarget(k).arme[1];
+    assert.ok(a.ellbogen.y < a.schulter.y - 20 && a.hand.y < a.ellbogen.y - 20);
+});
+
 test('Haar-Palette: hell > mittel > dunkel, null = Standard', () => {
     const p = haarPalette(0x6a4128);
     const hell = h => parseInt(h.slice(1, 3), 16) + parseInt(h.slice(3, 5), 16) + parseInt(h.slice(5, 7), 16);

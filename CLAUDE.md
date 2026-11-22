@@ -56,8 +56,6 @@ src/start/Portal.js     Ring-Tor mit Wasser-Shader
 src/start/startUi.js    Name, Pfeile, Haarfarben, Kamera, Los
 src/start/kamera.js     Kamerabild als Hintergrund (hinten/vorne)
 src/start/ar.js         WebXR-AR: Tor auf echten Boden stellen (Android Chrome)
-src/start/RigFigur.js   ?rig: gemalte 3D-Schüler-Puppe statt KayKit (Knochen steuern sie)
-src/rig/                Puppe: retarget.js (rein, getestet), Pupil.js, teile.js, material.js, physik.js, gesicht.js
 src/magiestrom/          Ei ausbrüten: regeln.js (rein, getestet), MagieStrom.js (Grafik)
 src/ui/ui.css           Seiten-Stil
 src/net/                Mehrspieler, fertig aber noch nicht eingebaut
