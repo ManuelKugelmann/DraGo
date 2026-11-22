@@ -20,6 +20,8 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 
 ## Entscheidungen
 
+- 2026-11-22: Grafik-Stil: **2.5D** – Dinge stehen an **3D-Positionen**, sind aber **flach gemalt**
+  (wie Pappfiguren in einem Diorama).
 - 2026-11-22: Magiestrom = **Lernspiel**: richtiges Ergebnis / Vokabel wählen oder **abschätzen, welche Rechnung
   mehr gibt**. **Gegenpartikel löschen eigene aus.**
 - 2026-11-22: Figuren-Look: **Pinselstriche im Shader** (Option 1).
