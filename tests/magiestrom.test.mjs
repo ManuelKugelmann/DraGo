@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { schaetzTor, rechenTor, vokabelTor, nachTor, schatten, nachSchatten } from '../src/magiestrom/regeln.js';
+import { schaetzTor, rechenTor, vokabelTor, nachTor } from '../src/magiestrom/regeln.js';
 
 const folge = werte => { let i = 0; return () => werte[i++ % werte.length]; };
 
@@ -43,13 +43,6 @@ test('Frage-Tor: richtig = doppelt, falsch = bleibt gleich (kein Malus)', () => 
     assert.equal(nachTor(t, 0, 5), 5);
 });
 
-test('Schatten löschen aus, bei 0 neue Start-Funken', () => {
-    assert.equal(schatten(0), 2);
-    assert.equal(schatten(3), 8);
-    assert.deepEqual(nachSchatten(10, 4), { geloescht: 4, uebrig: 6, weiter: 6 });
-    assert.deepEqual(nachSchatten(3, 5), { geloescht: 3, uebrig: 0, weiter: 3 });
-});
-
 test('Stärke: schneller = mehr Sterne', async () => {
     const { staerke } = await import('../src/magiestrom/regeln.js');
     assert.equal(staerke(60), 3);
@@ -89,21 +82,19 @@ test('Stufen: Klasse aus Alter, Klasse 1 ohne Vokabeln, Aufgaben im Rahmen', asy
     }
 });
 
-test('Echtzeit: Funken heizen, Schatten löschen Wärme, Wärme 0 = kalt', async () => {
-    const { neuerZustand, neueSchatten, treffer, waermen, stand } = await import('../src/magiestrom/regeln.js');
-    const m = { start: 2, start_waerme: 3, ziel: 10, waerme: 0.5, schatten_start: 1, schatten_plus: 1, kaelte: 2 };
+test('Echtzeit: Funken = Wärme, Schatten löschen Funken, 0 = kalt', async () => {
+    const { neuerZustand, neueSchatten, treffer, stand } = await import('../src/magiestrom/regeln.js');
+    const m = { start: 3, ziel: 10, schatten_start: 1, schatten_plus: 1, kaelte: 1 };
     const z = neuerZustand(m);
-    waermen(z, 2, m);
-    assert.equal(z.warm, 5);
+    assert.equal(z.n, 3);
     treffer(z, m);
-    assert.equal(z.warm, 3);
+    assert.equal(z.n, 2);
     assert.equal(stand(z, m), 'laeuft');
-    treffer(z, m); treffer(z, m);
-    assert.equal(z.warm, 0);
-    waermen(z, 0.1, m);                 // Funken heizen danach weiter – bleibt trotzdem verloren
+    treffer(z, m); treffer(z, m); treffer(z, m);
+    assert.equal(z.n, 0);
     assert.equal(stand(z, m), 'kalt');
     assert.equal(neueSchatten(z, 2, m), 2);
-    z.warm = 10;
+    z.n = 10;
     assert.equal(stand(z, m), 'geschluepft');
 });
 

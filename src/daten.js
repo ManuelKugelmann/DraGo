@@ -60,14 +60,14 @@ export const SCHUELER = [
 // Natürliche Haarfarben zum Antippen: Original, schwarz, dunkelbraun, braun, hellbraun, blond, rot, grau.
 export const HAARFARBEN = [null, 0x1c1410, 0x3b2416, 0x6a4128, 0x9a6a3e, 0xd9b26a, 0xb5532a, 0xc9c4bc];
 
-// Magiestrom-Spiel (Ei ausbrüten): Wettrennen. Funken heizen das Ei, Schatten löschen Wärme.
-// start = Funken am Anfang (wenige: dann ist Plus besser, später Mal), start_waerme = Wärme-Vorrat am Anfang,
-// ziel = Wärme zum Schlüpfen, waerme = Wärme pro Funke und Sekunde, bonus = mal so viele Funken bei richtiger Antwort,
+// Magiestrom-Spiel (Ei ausbrüten): Wettrennen. Funken = Wärme des Eis, Schatten löschen Funken.
+// start = Funken am Anfang (wenige: dann ist Plus besser, später Mal), ziel = Funken zum Schlüpfen,
+// bonus = mal so viele Funken bei richtiger Antwort,
 // schatten_start = Schatten pro Sekunde am Anfang, schatten_plus = so viel mehr pro 10 Sekunden,
-// kaelte = Wärme, die ein Schatten löscht. Wärme 0 = Ei kalt = nochmal.
+// kaelte = Funken, die ein Schatten löscht. 0 Funken = Ei kalt = nochmal.
 // sterne = Sekunden bis zum Schlüpfen für ⭐⭐⭐ und ⭐⭐ (schneller = stärkerer Drache).
-export const MAGIE = { start: 4, start_waerme: 12, ziel: 100, waerme: 0.08, bonus: 2,
-    schatten_start: 0.5, schatten_plus: 0.35, kaelte: 1.5, sterne: [50, 80] };
+export const MAGIE = { start: 5, ziel: 100, bonus: 2,
+    schatten_start: 0.3, schatten_plus: 0.15, kaelte: 1, sterne: [25, 45] };
 
 // Vokabeln für Frage-Tore (deutsch -> englisch). Einfach Zeilen dazuschreiben!
 export const VOKABELN = [

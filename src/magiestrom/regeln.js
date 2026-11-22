@@ -1,10 +1,8 @@
 // Magiestrom: Regeln ohne Grafik (reine Logik, getestet in tests/magiestrom.test.mjs).
 //
-// Ablauf einer Runde:
-//  1. Ein Tor: Schätz-Tor (welche Rechnung gibt mehr Funken?) oder Frage-Tor (Rechnen / Vokabel).
-//  2. Schatten-Funken kommen vom Ei und löschen gleich viele eigene Funken aus.
-//  3. Die übrigen Funken wärmen das Ei. Ist das Ei warm genug, schlüpft der Drache.
-// Kein Malus: eine falsche Antwort bringt nur keinen Bonus. Bei 0 Funken gibt es neue Start-Funken.
+// Funken = Wärme des Eis. Aufgaben bringen Funken, Schatten löschen Funken.
+// Ziel erreicht: Drache schlüpft. 0 Funken: Ei kalt, nochmal.
+// Kein Malus: eine falsche Antwort bringt nur keine Funken.
 
 export const RECHNUNGEN = [
     { text: '× 2', f: n => n * 2 },
@@ -87,15 +85,6 @@ export function nachTor(tor, wahl, n, bonus = 2) {
     return wahl === tor.richtig ? n * bonus : n;
 }
 
-/** Schatten-Funken in Runde r (0, 1, 2, ...): werden langsam mehr. */
-export const schatten = (r, start = 2, plus = 2) => start + r * plus;
-
-/** Schatten löschen eigene Funken aus. Bei 0 gibt es neue Start-Funken. */
-export function nachSchatten(n, s, startFunken = 3) {
-    const uebrig = Math.max(0, n - s);
-    return { geloescht: Math.min(n, s), uebrig, weiter: uebrig > 0 ? uebrig : startFunken };
-}
-
 /** Stärke des Drachen (1..3 Sterne): je schneller das Ei warm war, desto stärker.
  *  grenzen = Sekunden für 3 und 2 Sterne, z. B. [90, 180]. */
 export function staerke(sekunden, grenzen = [90, 180]) {
@@ -104,12 +93,11 @@ export function staerke(sekunden, grenzen = [90, 180]) {
     return 1;
 }
 
-// ---------- Echtzeit: Wettrennen Funken (Wärme) gegen Schatten (Kälte) ----------
-// m = MAGIE aus daten.js: start (Funken), start_waerme, ziel (Wärme zum Schlüpfen),
-// waerme (Wärme pro Funke und Sekunde), schatten_start / schatten_plus (Schatten pro Sekunde, + pro 10 s),
-// kaelte (Wärme, die ein Schatten löscht). Wärme 0 = Ei kalt = verloren.
+// ---------- Echtzeit: Wettrennen Funken gegen Schatten ----------
+// m = MAGIE aus daten.js: start (Funken), ziel (Funken zum Schlüpfen),
+// schatten_start / schatten_plus (Schatten pro Sekunde, + pro 10 s), kaelte (Funken, die ein Schatten löscht).
 
-export const neuerZustand = m => ({ n: m.start, warm: m.start_waerme, zeit: 0, schattenRest: 0 });
+export const neuerZustand = m => ({ n: m.start, zeit: 0, schattenRest: 0 });
 
 /** Wie viele neue Schatten in dt starten (werden mit der Zeit mehr). */
 export function neueSchatten(z, dt, m) {
@@ -119,20 +107,14 @@ export function neueSchatten(z, dt, m) {
     return k;
 }
 
-/** Ein Schatten erreicht das Ei und löscht Wärme. */
+/** Ein Schatten erreicht das Ei und löscht Funken. */
 export function treffer(z, m) {
-    z.warm = Math.max(0, z.warm - m.kaelte);
-    if (z.warm === 0) z.kalt = true;   // einmal ganz kalt = verloren (auch wenn Funken danach wieder heizen)
-}
-
-/** Die kreisenden Funken heizen das Ei: je mehr Funken, desto schneller. */
-export function waermen(z, dt, m) {
-    z.warm += z.n * m.waerme * dt;
+    z.n = Math.max(0, z.n - m.kaelte);
 }
 
 /** 'laeuft' | 'geschluepft' | 'kalt' */
 export function stand(z, m) {
-    if (z.warm >= m.ziel) return 'geschluepft';
-    if (z.kalt || z.warm <= 0) return 'kalt';
+    if (z.n >= m.ziel) return 'geschluepft';
+    if (z.n <= 0) return 'kalt';
     return 'laeuft';
 }

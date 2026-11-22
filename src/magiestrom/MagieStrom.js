@@ -1,8 +1,8 @@
-// Magiestrom-Spiel in Echtzeit, ein Wettrennen: Eigene Funken kreisen um das Ei und heizen es
-// (je mehr, desto schneller). Schatten kommen ständig von außen (mit der Zeit immer mehr) und löschen Wärme.
+// Magiestrom-Spiel in Echtzeit, ein Wettrennen: Eigene Funken kreisen um das Ei, sie sind seine Wärme.
+// Schatten kommen ständig von außen (mit der Zeit immer mehr) und löschen Funken.
 // Der Frage-Kasten unten ist die Feuerquelle: gelöste Aufgaben schicken neue Funken von dort zum Ei.
-// Ei warm genug: Risse, aufbrechen, zufälliger Babydrache. Wärme 0: Ei kalt – nochmal!
-import { zufallsTor, nachTor, staerke, neuerZustand, neueSchatten, treffer, waermen, stand } from './regeln.js';
+// Genug Funken: Risse, aufbrechen, zufälliger Babydrache. 0 Funken: Ei kalt – nochmal!
+import { zufallsTor, nachTor, staerke, neuerZustand, neueSchatten, treffer, stand } from './regeln.js';
 import { stufe } from './stufen.js';
 import { MAGIE, VOKABELN, TEXTE, DRACHEN } from '../daten.js';
 
@@ -122,7 +122,7 @@ export default class MagieStrom {
     zeige() {
         this.anzeige.textContent = '✨ ' + this.z.n;
         if (this.liveZahl) this.liveZahl.textContent = TEXTE.magie_du_hast + ' ✨ ' + this.z.n;
-        this.balken.style.setProperty('--wert', Math.min(1, this.z.warm / MAGIE.ziel));
+        this.balken.style.setProperty('--wert', Math.min(1, this.z.n / MAGIE.ziel));
     }
 
     frage(tor) {
@@ -215,8 +215,7 @@ export default class MagieStrom {
                 const x = e.x + Math.cos(a) * r, y = e.y + Math.sin(a) * r * 0.7;
                 this.angreifer.push({ x, y, x0: x, y0: y, t: 0 });
             }
-            // Funken wärmen das Ei; ab und zu fliegt ein Glanz-Funke hinein (nur zum Ansehen)
-            waermen(z, dt, MAGIE);
+            // ab und zu fliegt ein Glanz-Funke ins Ei (nur zum Ansehen)
             if (this.kreis.length && Math.random() < dt * this.kreis.length * 0.3) {
                 const p = this.kreisPos(this.kreis[Math.floor(Math.random() * this.kreis.length)], t);
                 this.teilchen.push({ x: p.x, y: p.y, vx: (e.x - p.x) * 2, vy: (e.y - p.y) * 2, leben: 0.45, art: 'licht' });
@@ -234,6 +233,8 @@ export default class MagieStrom {
             a.weg = true;
             if (!this.laeuft) continue;
             treffer(z, MAGIE);
+            // ein kreisender Funke verpufft
+            if (this.kreis.length > z.n) { const p = this.kreisPos(this.kreis.pop(), t); for (let i = 0; i < 4; i++) this.glitzer(p.x, p.y, 'puff'); }
             this.wurzel.classList.add('ei-wackelt');
             setTimeout(() => this.wurzel.classList.remove('ei-wackelt'), 250);
             for (let i = 0; i < 5; i++) this.glitzer(a.x, a.y, 'puff');
@@ -256,15 +257,15 @@ export default class MagieStrom {
             c.drawImage(this.figurBild, f.x - breite / 2, f.y - f.h - hops, breite, f.h);
         }
         c.globalCompositeOperation = 'lighter';
-        // Feuer-Schein ums Ei: wächst mit der Wärme, flackert, wird von rot zu goldweiß
-        const w = Math.min(1, this.z.warm / MAGIE.ziel), flacker = 1 + Math.sin(t / 90) * 0.04 + Math.sin(t / 37) * 0.03;
+        // Feuer-Schein ums Ei: wächst mit den Funken, flackert, wird von rot zu goldweiß
+        const w = Math.min(1, this.z.n / MAGIE.ziel), flacker = 1 + Math.sin(t / 90) * 0.04 + Math.sin(t / 37) * 0.03;
         const R = e.ry * (1.1 + w * 1.6) * flacker;
         const g = c.createRadialGradient(e.x, e.y, e.rx * 0.6, e.x, e.y, R);
         g.addColorStop(0, `rgba(255,${150 + w * 100 | 0},${60 + w * 120 | 0},${0.15 + w * 0.55})`);
         g.addColorStop(0.6, `rgba(255,${90 + w * 80 | 0},40,${0.1 + w * 0.3})`);
         g.addColorStop(1, 'rgba(255,80,30,0)');
         c.fillStyle = g; c.beginPath(); c.ellipse(e.x, e.y, R * 0.85, R, 0, 0, Math.PI * 2); c.fill();
-        // kleine Flammen-Zungen am Rand, mehr bei mehr Wärme
+        // kleine Flammen-Zungen am Rand, mehr bei mehr Funken
         for (let i = 0; i < Math.round(w * 18); i++) {
             const a = i / 18 * Math.PI * 2 + t / 900, h = R * (0.92 + Math.sin(t / 120 + i * 2.1) * 0.08), m = e.rx * 0.22 * (0.6 + w);
             c.globalAlpha = 0.35 + w * 0.4;

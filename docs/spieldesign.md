@@ -17,13 +17,14 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
   versteckt, ein Glitzern verrät es. Kristall antippen: er rutscht zur Seite, das Nest ist da.
 - **Alter** am Start wählen (6–12): Aufgaben passen sich an (Klasse 1: bis 20, 2er/5er/10er; Englisch ab Klasse 3).
 - **Ausbrüten (Magiestrom, Echtzeit):** Deine Figur steht neben dem Ei. Der Frage-Kasten unten ist die Feuerquelle: gelöste
-  Aufgaben schicken Funken zum Ei, sie kreisen darum und heizen es (mehr Funken = schneller). Schatten kommen ständig von
-  außen, werden mehr und löschen Wärme. Wettrennen! Wärme 0 = Ei kalt = nochmal.
+  Aufgaben schicken Funken zum Ei, sie kreisen darum. **Funken = Wärme.** Schatten kommen ständig von
+  außen, werden mehr und löschen Funken. Wettrennen! 100 Funken = Schlüpfen, 0 Funken = Ei kalt = nochmal.
   Aufgaben zufällig: „Was gibt mehr Funken?“ (immer Plus gegen Mal, mit der Funken-Zahl von jetzt), Einmaleins, Plus/Minus, Vokabeln (richtig = doppelt).
-  Wärme voll: Risse, Ei bricht auf, zufälliger Babydrache (Feuer, Sturm, Rune). Schneller = stärker (1–3 ⭐).
+  100 Funken: Risse, Ei bricht auf, zufälliger Babydrache (Feuer, Sturm, Rune). Schneller = stärker (1–3 ⭐).
 
 ## Entscheidungen
 
+- 2026-11-22: **Funken-Zahl = Wärme.** Schatten löschen Funken. 0 Funken = verloren.
 - 2026-11-22: **Schatten löschen Wärme** – Wettrennen: schneller wachsen als der Gegner. Wärme 0 = Ei kalt = nochmal.
 - 2026-11-22: **0 Funken = verloren.** Am Anfang ist **Plus** besser, später **Mal**. Frage-Kasten **unten in der Mitte als
   Feuerquelle** (neue Funken fliegen von dort zum Ei).
