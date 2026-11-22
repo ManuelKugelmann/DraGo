@@ -17,6 +17,11 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 
 ## Entscheidungen
 
+- 2026-11-22: **Magiestrom-Spiel**, um das Drachenei zum **Schlüpfen** zu bringen.
+- 2026-11-22: Startpunkte aus den Referenzen: **Drachen aus Chat A** (Rig-Test), **Figuren-Rig aus Chat B**.
+- 2026-11-22: Drachen und Eier **erscheinen auf der Weltkarte** in einer **Blitz-Kugel** (Teleport mit Blitzen).
+- 2026-11-22: Figuren-Look: erst **3D gemalt aussehen lassen** (A). Später vielleicht gemalte 2.5D-Puppe
+  (Rig aus den Referenzen) mit KayKit-Bewegungen.
 - 2026-11-22: Das **erste Ei ist versteckt**, man muss es suchen.
 - 2026-11-22: **Tor in der echten Welt verankern** (AR).
 - 2026-11-22: Portal wie ein **Ring-Tor** (Stargate-artig), **über dem Kamerabild** (AR-artig).

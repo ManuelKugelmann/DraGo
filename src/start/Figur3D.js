@@ -6,6 +6,27 @@ import { faerbeHaar } from './haar.js';
 const loader = new GLTFLoader();
 const UEBERGANG = 0.25; // Sekunden zum Überblenden zwischen Bewegungen
 const HOEHE = 1.5;      // Größe jeder Figur in Metern
+const KONTUR = 0.012;   // Dicke der Umrisslinie in Metern
+const KONTUR_FARBE = 0x2a1a24;
+
+// Weiche Zeichentrick-Schattierung: wenige, sanft verlaufende Helligkeitsstufen.
+const stufen = (() => {
+    const t = new THREE.DataTexture(new Uint8Array([90, 90, 90, 255, 165, 160, 170, 255, 235, 230, 225, 255, 255, 252, 245, 255]), 4, 1);
+    t.minFilter = t.magFilter = THREE.LinearFilter;
+    t.needsUpdate = true;
+    return t;
+})();
+
+/** Umrisslinie: Rückseiten etwas nach außen geschoben (funktioniert auch mit Skelett-Animation). */
+function konturMaterial(dicke) {
+    const m = new THREE.MeshBasicMaterial({ color: KONTUR_FARBE, side: THREE.BackSide });
+    m.onBeforeCompile = s => {
+        s.vertexShader = s.vertexShader.replace('#include <begin_vertex>',
+            `#include <begin_vertex>
+ transformed += normalize(normal) * ${dicke.toFixed(5)};`);
+    };
+    return m;
+}
 
 export default class Figur3D {
     static async laden(url) {
@@ -20,6 +41,7 @@ export default class Figur3D {
         gltf.scene.traverse(o => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false; } });
         const h = new THREE.Box3().setFromObject(gltf.scene).getSize(new THREE.Vector3()).y || 1;
         gltf.scene.scale.setScalar(HOEHE / h);
+        this.konturDicke = KONTUR * h / HOEHE;   // in Modell-Einheiten
         this.mixer = new THREE.AnimationMixer(gltf.scene);
         this.clips = Object.fromEntries(gltf.animations.map(c => [c.name, c]));
         this.aktiv = null;
@@ -43,14 +65,22 @@ export default class Figur3D {
         this.spiele('Idle');
     }
 
+    /** Gemalter Look: Zeichentrick-Material (eigene Kopie pro Figur) und Umrisslinie. */
     findeMaterial() {
-        let m = null;
-        this.obj.traverse(o => { if (!m && o.isMesh) m = o.material; });
-        // Alle Teile teilen sich ein Material; als eigene Kopie für diese Figur.
-        if (!m) return null;
-        const kopie = m.clone();
-        this.obj.traverse(o => { if (o.isMesh) o.material = kopie; });
-        return kopie;
+        const teile = [];
+        this.obj.traverse(o => { if (o.isMesh) teile.push(o); });
+        if (!teile.length) return null;
+        const alt = teile[0].material;
+        const mat = new THREE.MeshToonMaterial({ map: alt.map, gradientMap: stufen });
+        const kontur = konturMaterial(this.konturDicke);
+        for (const t of teile) {
+            t.material = mat;
+            const linie = t.isSkinnedMesh ? new THREE.SkinnedMesh(t.geometry, kontur) : new THREE.Mesh(t.geometry, kontur);
+            if (t.isSkinnedMesh) linie.bind(t.skeleton, t.bindMatrix);
+            linie.frustumCulled = false;
+            t.add(linie);
+        }
+        return mat;
     }
 
     setHaar(farbe) {
