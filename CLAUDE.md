@@ -7,7 +7,7 @@ Phaser 4 (WebGL) + Vite, einfaches JavaScript (ESM). Mehrspieler peer-to-peer ü
 
 **Ein paar 10-jährige Kinder machen das Spieldesign.** Sie schreiben dir direkt.
 
-- Antworte **auf Deutsch**, in **kurzen, einfachen Sätzen**. Keine Fachwörter (oder kurz erklären).
+- Antworte **auf Deutsch**. **Sehr kurze Fragen und Antworten**: 1–3 Sätze. Keine Fachwörter.
 - **Eine Frage auf einmal.** Bei mehreren Möglichkeiten: 2–3 Auswahlen anbieten.
 - Nach jeder Änderung: **sagen, was man jetzt sehen kann**, und wo (Link / „lade die Seite neu“).
 - Ideen der Kinder ernst nehmen und klein anfangen: erst etwas Sichtbares, dann verfeinern.
