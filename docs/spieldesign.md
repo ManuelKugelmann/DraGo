@@ -13,6 +13,8 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 
 ## Entscheidungen
 
+- 2026-11-22: **Hinter dem Portal** ist eine Höhle mit dem **ersten Ei**. Dort wechselt die Ansicht in
+  **3rd Person** (man sieht die eigene Spielfigur).
 - 2026-11-22: **Intro in AR:** echtes Kamerabild, darüber ein Portal. Man geht zum Portal und betritt
   die magische Welt (gezeichnet / 3D). Technik: WebXR auf Android Chrome; iPhone braucht einen
   Ersatz (Kamerabild + Handy-Drehung, ohne Hingehen).
