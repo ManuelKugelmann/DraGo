@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dev-dist/
+# Lokale Referenzen (privat, nie veröffentlichen)
+Reference/
+_ref/
+# Erzeugte Icons (npm run icons)
+public/pwa-*.png
+public/maskable-*.png
+.env
+*.log
+.DS_Store
