@@ -104,11 +104,11 @@ export function staerke(sekunden, grenzen = [90, 180]) {
     return 1;
 }
 
-// ---------- Echtzeit: Schatten kommen ständig, die Zeit läuft ----------
-// m = MAGIE aus daten.js: start, ziel, zeit (Sekunden), schatten_start / schatten_plus (pro Sekunde, + pro 10 s),
-// aufnahme (Anteil der Funken, der pro Sekunde ins Ei fliegt), kaelte (Wärme-Verlust pro Schatten, der durchkommt).
+// ---------- Echtzeit: Schatten kommen ständig, Funken wärmen das Ei ----------
+// m = MAGIE aus daten.js: start (Funken), ziel (Wärme), schatten_start / schatten_plus (pro Sekunde, + pro 10 s),
+// waerme (Wärme pro Funke und Sekunde). 0 Funken = das Feuer ist aus = verloren.
 
-export const neuerZustand = m => ({ n: m.start, warm: 0, zeit: 0, schattenRest: 0, aufnahmeRest: 0 });
+export const neuerZustand = m => ({ n: m.start, warm: 0, zeit: 0, schattenRest: 0 });
 
 /** Wie viele neue Schatten in dt starten (werden mit der Zeit mehr). */
 export function neueSchatten(z, dt, m) {
@@ -118,25 +118,19 @@ export function neueSchatten(z, dt, m) {
     return k;
 }
 
-/** Ein Schatten kommt an: löscht einen Funken, oder kühlt das Ei, wenn keiner mehr da ist. */
-export function treffer(z, m) {
-    if (z.n > 0) { z.n--; return 'funke'; }
-    z.warm = Math.max(0, z.warm - m.kaelte);
-    return 'ei';
+/** Ein Schatten kommt an und löscht einen Funken. */
+export function treffer(z) {
+    if (z.n > 0) z.n--;
 }
 
-/** Funken fliegen nach und nach ins Ei und wärmen es. Gibt die Zahl der aufgenommenen Funken zurück. */
-export function aufnehmen(z, dt, m) {
-    z.aufnahmeRest += z.n * m.aufnahme * dt;
-    const k = Math.min(z.n, Math.floor(z.aufnahmeRest));
-    z.aufnahmeRest -= k;
-    z.n -= k; z.warm += k;
-    return k;
+/** Die kreisenden Funken wärmen das Ei: je mehr Funken, desto schneller. */
+export function waermen(z, dt, m) {
+    z.warm += z.n * m.waerme * dt;
 }
 
-/** 'laeuft' | 'geschluepft' | 'kalt' */
+/** 'laeuft' | 'geschluepft' | 'aus' (keine Funken mehr) */
 export function stand(z, m) {
     if (z.warm >= m.ziel) return 'geschluepft';
-    if (z.zeit >= m.zeit) return 'kalt';
+    if (z.n <= 0) return 'aus';
     return 'laeuft';
 }

@@ -89,22 +89,20 @@ test('Stufen: Klasse aus Alter, Klasse 1 ohne Vokabeln, Aufgaben im Rahmen', asy
     }
 });
 
-test('Echtzeit: Schatten löschen Funken, dann kühlen sie das Ei; Zeit abgelaufen = kalt', async () => {
-    const { neuerZustand, neueSchatten, treffer, aufnehmen, stand } = await import('../src/magiestrom/regeln.js');
-    const m = { start: 2, ziel: 10, zeit: 60, schatten_start: 1, schatten_plus: 1, aufnahme: 0.5, kaelte: 2 };
+test('Echtzeit: Schatten löschen Funken, Funken wärmen, 0 Funken = aus', async () => {
+    const { neuerZustand, neueSchatten, treffer, waermen, stand } = await import('../src/magiestrom/regeln.js');
+    const m = { start: 2, ziel: 10, schatten_start: 1, schatten_plus: 1, waerme: 0.5 };
     const z = neuerZustand(m);
-    assert.equal(treffer(z, m), 'funke');
+    waermen(z, 2, m);
+    assert.equal(z.warm, 2);
+    treffer(z);
     assert.equal(z.n, 1);
-    z.warm = 5; z.n = 0;
-    assert.equal(treffer(z, m), 'ei');
-    assert.equal(z.warm, 3);
-    z.n = 10;
-    assert.equal(aufnehmen(z, 1, m), 5);
-    assert.equal(z.warm, 8);
+    assert.equal(stand(z, m), 'laeuft');
+    treffer(z); treffer(z);
+    assert.equal(z.n, 0);
+    assert.equal(stand(z, m), 'aus');
     assert.equal(neueSchatten(z, 2, m), 2);
-    z.zeit = 60;
-    assert.equal(stand(z, m), 'kalt');
-    z.warm = 10;
+    z.n = 5; z.warm = 10;
     assert.equal(stand(z, m), 'geschluepft');
 });
 

@@ -105,8 +105,6 @@ body.magie .nochmal { position: fixed; z-index: 5; top: max(10px, env(safe-area-
     padding: 4px 14px; border-radius: 14px; background: #24122fcc; color: var(--gold); }
 .magie-waerme { top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 8px;
     align-items: center; font-size: 24px; padding: 6px 12px; border-radius: 16px; background: #24122fcc; }
-.magie-uhr { width: min(18vw, 110px); height: 14px; border-radius: 7px; background: #ffffff22; overflow: hidden; }
-.magie-uhr::after { content: ''; display: block; height: 100%; width: calc(var(--wert, 1) * 100%); background: #9fe3ff; }
 .magie-nochmal { display: none; left: 50%; top: 58%; transform: translateX(-50%); padding: 12px 30px; border-radius: 22px;
     font-size: 26px; font-weight: bold; background: #9b5cff; box-shadow: 0 5px 0 #4a2380; }
 #magie.verloren .magie-nochmal { display: block; }
@@ -114,14 +112,15 @@ body.magie .nochmal { position: fixed; z-index: 5; top: max(10px, env(safe-area-
 .magie-balken { width: min(40vw, 280px); height: 18px; border-radius: 9px; background: #ffffff22; overflow: hidden; }
 .magie-balken::after { content: ''; display: block; height: 100%; width: calc(var(--wert, 0) * 100%);
     background: linear-gradient(90deg, #ffb347, #ff6a3c); transition: width 0.6s; }
-.magie-tor { right: max(16px, env(safe-area-inset-right)); top: 50%; transform: translateY(-50%) scale(0.8); opacity: 0;
-    pointer-events: none; transition: 0.25s; padding: 14px 16px; border-radius: 22px; background: #24122fe6;
-    border: 3px solid #9fe3ff; text-align: center; max-width: 44vw; }
-.magie-tor.offen { opacity: 1; transform: translateY(-50%) scale(1); pointer-events: auto; }
-.magie-frage { font-size: 26px; margin-bottom: 12px; }
-.magie-live { font-size: 20px; color: var(--gold); margin-top: 4px; }
-.magie-optionen { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.magie-option { min-width: 84px; padding: 12px 16px; border-radius: 16px; font-size: 26px; font-weight: bold;
+.magie-tor { left: 50%; bottom: max(8px, env(safe-area-inset-bottom)); transform: translateX(-50%) scale(0.9); opacity: 0;
+    pointer-events: none; transition: 0.2s; padding: 8px 14px; border-radius: 22px; background: #24122fe6;
+    border: 3px solid #ffb347; box-shadow: 0 0 24px #ff8a3c88, inset 0 0 18px #ff8a3c44; text-align: center;
+    display: flex; gap: 12px; align-items: center; max-width: 96vw; }
+.magie-tor.offen { opacity: 1; transform: translateX(-50%) scale(1); pointer-events: auto; }
+.magie-frage { font-size: 22px; white-space: nowrap; }
+.magie-live { font-size: 17px; color: var(--gold); margin-top: 2px; }
+.magie-optionen { display: flex; gap: 8px; justify-content: center; flex-wrap: nowrap; }
+.magie-option { min-width: 72px; padding: 10px 14px; border-radius: 16px; font-size: 26px; font-weight: bold;
     background: #3b6fd9; box-shadow: 0 4px 0 #1d3a7a; }
 .magie-hinweis { left: 50%; top: 22%; transform: translateX(-50%); font-size: 30px; font-weight: bold; opacity: 0;
     transition: opacity 0.2s; pointer-events: none; padding: 6px 18px; border-radius: 16px; background: #24122fcc; white-space: nowrap; }
@@ -135,6 +134,5 @@ body.magie .nochmal { position: fixed; z-index: 5; top: max(10px, env(safe-area-
 @keyframes wackeln { 25% { background-position: calc(50% - 4px) 50%; } 75% { background-position: calc(50% + 4px) 50%; } }
 @keyframes blitz { 80% { filter: brightness(1); } 90% { filter: brightness(3); } 100% { filter: brightness(1.1); } }
 @media (orientation: portrait) {
-    .magie-tor { right: 50%; top: auto; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(50%) scale(0.8); max-width: 90vw; }
-    .magie-tor.offen { transform: translateX(50%) scale(1); }
+    .magie-tor { flex-direction: column; gap: 8px; }
 }

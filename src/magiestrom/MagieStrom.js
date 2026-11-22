@@ -1,8 +1,8 @@
-// Magiestrom-Spiel in Echtzeit: Die Zeit läuft. Schatten-Funken kommen ständig von außen (immer mehr).
-// Eigene Funken kreisen um das Ei, fangen Schatten ab und fliegen nach und nach ins Ei (Wärme).
-// Gelöste Aufgaben bringen neue Funken – sie fliegen von der Spielfigur zum Ei.
-// Ist das Ei rechtzeitig warm: Risse, aufbrechen, zufälliger Babydrache. Sonst: kalt – nochmal!
-import { zufallsTor, nachTor, staerke, neuerZustand, neueSchatten, treffer, aufnehmen, stand } from './regeln.js';
+// Magiestrom-Spiel in Echtzeit: Schatten-Funken kommen ständig von außen (mit der Zeit immer mehr).
+// Eigene Funken kreisen um das Ei, wärmen es (je mehr, desto schneller) und fangen Schatten ab.
+// Der Frage-Kasten unten ist die Feuerquelle: gelöste Aufgaben schicken neue Funken von dort zum Ei.
+// Ei warm genug: Risse, aufbrechen, zufälliger Babydrache. 0 Funken: Feuer aus – nochmal!
+import { zufallsTor, nachTor, staerke, neuerZustand, neueSchatten, treffer, waermen, stand } from './regeln.js';
 import { stufe } from './stufen.js';
 import { MAGIE, VOKABELN, TEXTE, DRACHEN } from '../daten.js';
 
@@ -33,8 +33,7 @@ export default class MagieStrom {
         this.anzeige = el('div', 'magie-zahl');
         this.waerme = el('div', 'magie-waerme');
         this.balken = el('div', 'magie-balken');
-        this.uhr = el('div', 'magie-uhr');
-        this.waerme.append(el('span', '', '🔥'), this.balken, el('span', '', '⏳'), this.uhr);
+        this.waerme.append(el('span', '', '🔥'), this.balken);
         this.tor = el('div', 'magie-tor');
         this.hinweis = el('div', 'magie-hinweis');
         this.nochmal = el('button', 'magie-nochmal', TEXTE.magie_nochmal);
@@ -110,7 +109,9 @@ export default class MagieStrom {
 
     passeKreis() {
         const soll = Math.min(MAX_KREIS, this.z.n);
-        const f = this.figurPlatz, von = { x: f.x + f.h * 0.15, y: f.y - f.h * 0.55 };
+        // Neue Funken kommen aus dem Frage-Kasten unten (der Feuerquelle)
+        const kasten = this.tor.getBoundingClientRect();
+        const von = kasten.width ? { x: kasten.left + kasten.width / 2, y: kasten.top } : { x: this.w / 2, y: this.h - 60 };
         let neu = 0;
         while (this.kreis.length < soll) {
             this.kreis.push({ w: Math.random() * Math.PI * 2, r: 1.25 + Math.random() * 0.45, v: 0.8 + Math.random() * 1.2, von, f: -0.04 * neu++ });
@@ -122,7 +123,6 @@ export default class MagieStrom {
         this.anzeige.textContent = '✨ ' + this.z.n;
         if (this.liveZahl) this.liveZahl.textContent = TEXTE.magie_du_hast + ' ✨ ' + this.z.n;
         this.balken.style.setProperty('--wert', Math.min(1, this.z.warm / MAGIE.ziel));
-        this.uhr.style.setProperty('--wert', Math.max(0, 1 - this.z.zeit / MAGIE.zeit));
     }
 
     frage(tor) {
@@ -215,10 +215,11 @@ export default class MagieStrom {
                 const x = e.x + Math.cos(a) * r, y = e.y + Math.sin(a) * r * 0.7;
                 this.angreifer.push({ x, y, x0: x, y0: y, t: 0 });
             }
-            // Funken fliegen nach und nach ins Ei
-            for (let k = aufnehmen(z, dt, MAGIE); k > 0; k--) {
-                const i = this.kreis.findIndex(q => q.f >= 1);
-                if (i >= 0) { const p = this.kreisPos(this.kreis[i], t); this.kreis.splice(i, 1); this.teilchen.push({ x: p.x, y: p.y, vx: (e.x - p.x) * 2, vy: (e.y - p.y) * 2, leben: 0.5, art: 'funke' }); }
+            // Funken wärmen das Ei; ab und zu fliegt ein Glanz-Funke hinein (nur zum Ansehen)
+            waermen(z, dt, MAGIE);
+            if (this.kreis.length && Math.random() < dt * this.kreis.length * 0.3) {
+                const p = this.kreisPos(this.kreis[Math.floor(Math.random() * this.kreis.length)], t);
+                this.teilchen.push({ x: p.x, y: p.y, vx: (e.x - p.x) * 2, vy: (e.y - p.y) * 2, leben: 0.45, art: 'licht' });
             }
             const s = stand(z, MAGIE);
             if (s !== 'laeuft') this.ende(s);
@@ -232,7 +233,8 @@ export default class MagieStrom {
             if (k < ringK || a.weg) continue;
             a.weg = true;
             if (!this.laeuft) continue;
-            if (treffer(z, MAGIE) === 'funke' && this.kreis.length) {
+            treffer(z);
+            if (this.kreis.length) {
                 let best = 0, bestD = Infinity;
                 this.kreis.forEach((q, i) => { const p = this.kreisPos(q, t); const d = Math.hypot(p.x - a.x, p.y - a.y); if (d < bestD) { bestD = d; best = i; } });
                 const p = this.kreisPos(this.kreis[best], t);
