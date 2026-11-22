@@ -13,6 +13,7 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 
 ## Entscheidungen
 
+- 2026-11-22: Es gibt eine **Karte von oben**. Dort findet man neue Drachen – **im Haus und draußen**.
 - 2026-11-22: Man startet mit einem **Drachenei**.
 - 2026-11-22: Erst nur ein Startbild, dann Schritt für Schritt mehr.
 
