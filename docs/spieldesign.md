@@ -9,10 +9,13 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 
 ## Was es schon gibt
 
-- Startbild: Drachenei im Nest, Titel „DraGo“, Glitzer. Sonst nichts.
+- Startbild: Drachenei im Nest, Titel „DraGo“, Glitzer.
+- Spielfigur wählen: 4 Anime-Figuren (Platzhalter), 8 Haarfarben. Antippen = auswählen.
 
 ## Entscheidungen
 
+- 2026-11-22: **Spielfigur im Startbild wählen**, Anime-Stil, ein paar Varianten, **Haarfarbe wählbar**.
+  Erst Platzhalter.
 - 2026-11-22: **Hinter dem Portal** ist eine Höhle mit dem **ersten Ei**. Dort wechselt die Ansicht in
   **3rd Person** (man sieht die eigene Spielfigur).
 - 2026-11-22: **Intro in AR:** echtes Kamerabild, darüber ein Portal. Man geht zum Portal und betritt

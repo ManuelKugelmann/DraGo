@@ -49,7 +49,8 @@ Ideen. Was die Kinder entscheiden, gilt.
 ```
 main.js            Phaser-Start (Scale RESIZE: quer und hoch)
 src/daten.js       Texte, Drachen, Farben (Kinder ändern hier)
-src/Start.js       Startbild: Bild, Titel, Glitzer
+src/Start.js       Startbild: Bild, Titel, Glitzer, Figur + Haarfarbe wählen
+src/Figur.js       Platzhalter-Spielfigur (Anime-Chibi, Haare umfärbbar)
 src/ui/ui.css      Seiten-Stil
 src/net/           Mehrspieler, fertig aber noch nicht eingebaut: Netz (Trystero),
                    geheim (Raumname), schluessel (PBKDF2), nachricht (Prüfung)
