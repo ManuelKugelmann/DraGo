@@ -1,4 +1,4 @@
-// Haare, Bänder und Mantel: Verlet-Physik in 3D (x rechts, y unten, z zur Kamera).
+// Haare, Bänder und Mantel: Verlet-Physik in 3D (Körper-Raum der Puppe: x seitlich, y unten, z vorne).
 
 let kettenNr = 0;
 
@@ -9,8 +9,8 @@ export const Kette = (n, seg) => ({
 });
 
 /**
- * Einen Schritt rechnen. A = Ansatz, r = Ruhe-Richtung, o = { wind, schwere, steif, daempf, biege, stoss, zeit }.
- * stoss(q) schiebt Punkte aus dem Körper heraus.
+ * Einen Schritt rechnen. A = Ansatz, r = Ruhe-Richtung, o = { wind, schwere, steif, daempf, biege, stoss, zeit, zug }.
+ * stoss(q) schiebt Punkte aus dem Körper heraus, zug = {x, z} Fahrtwind beim Laufen.
  */
 export function schrittKette(k, A, r, o) {
     const biege = o.biege ?? 0.5, p = k.p;
@@ -23,7 +23,7 @@ export function schrittKette(k, A, r, o) {
         k.init = true;
     }
     p[0].x = p[0].ox = A.x; p[0].y = p[0].oy = A.y; p[0].z = p[0].oz = A.z;
-    const t = o.zeit;
+    const t = o.zeit, zx = o.zug?.x ?? 0, zz = o.zug?.z ?? 0;
     for (let i = 1; i < k.n; i++) {
         const q = p[i];
         let vx = q.x - q.ox, vy = q.y - q.oy, vz = q.z - q.oz;
@@ -32,7 +32,7 @@ export function schrittKette(k, A, r, o) {
         q.ox = q.x; q.oy = q.y; q.oz = q.z;
         const wv = o.wind * (1 + 0.6 * Math.sin(t * 2.3 + i * 1.1 + k.ph) + 0.3 * Math.sin(t * 5.1 + i * 0.7 + k.ph * 2));
         const wz = o.wind * 0.7 * Math.sin(t * 1.7 + i * 0.9 + k.ph * 1.3);
-        q.x += vx + wv; q.y += vy + o.schwere; q.z += vz + wz;
+        q.x += vx + wv + zx; q.y += vy + o.schwere; q.z += vz + wz + zz;
         let dx = rx, dy = ry, dz = rz;
         if (i >= 2) {
             let ux = p[i - 1].x - p[i - 2].x, uy = p[i - 1].y - p[i - 2].y, uz = p[i - 1].z - p[i - 2].z;
@@ -60,7 +60,7 @@ export const Tuch = (R, K, seg, w0, weit) => ({
 
 /** A = Mitte oben, D = Richtung der Reihen, quer/vor = Körper-Achsen, zf = nach vorne pro Reihe. */
 export function schrittTuch(C, A, D, quer, vor, zf, o) {
-    const { R, K, pts } = C, cw = C.w0 / (K - 1), t = o.zeit;
+    const { R, K, pts } = C, cw = C.w0 / (K - 1), t = o.zeit, zx = o.zug?.x ?? 0, zz = o.zug?.z ?? 0;
     const ruhe = (r, c) => {
         const l = (c - (K - 1) / 2) * cw * (1 + C.weit * r), f = zf * r;
         return {
@@ -82,7 +82,7 @@ export function schrittTuch(C, A, D, quer, vor, zf, o) {
         const vx = (q.x - q.ox) * o.daempf, vy = (q.y - q.oy) * o.daempf, vz = (q.z - q.oz) * o.daempf;
         q.ox = q.x; q.oy = q.y; q.oz = q.z;
         const w = o.wind * (1 + r * 0.25) * (1 + 0.5 * Math.sin(t * 2.1 + c * 0.8 + r * 0.6));
-        q.x += vx + w; q.y += vy + o.schwere; q.z += vz + w * 0.6 * Math.sin(t * 1.5 + c * 1.1 + r * 0.5);
+        q.x += vx + w + zx; q.y += vy + o.schwere; q.z += vz + w * 0.6 * Math.sin(t * 1.5 + c * 1.1 + r * 0.5) + zz;
         q.x += (p.x - q.x) * o.steif; q.y += (p.y - q.y) * o.steif; q.z += (p.z - q.z) * o.steif;
     }
     for (let it = 0; it < 3; it++) {

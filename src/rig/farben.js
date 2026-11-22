@@ -26,18 +26,3 @@ export function farbPalette(farbe) {
 
 /** Haar-Töne; null = Standard-Haar. */
 export const haarPalette = farbe => (farbe == null ? PAL.haar : farbPalette(farbe));
-
-const rgbCache = new Map();
-export function rgbVon(h) {
-    let v = rgbCache.get(h);
-    if (!v) { v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); rgbCache.set(h, v); }
-    return v;
-}
-
-/** Zwei Farben mischen (t = 0..1) als CSS-Farbe. */
-export function mische(a, b, t) {
-    const A = rgbVon(a), B = rgbVon(b);
-    return `rgb(${(A[0] + (B[0] - A[0]) * t) | 0},${(A[1] + (B[1] - A[1]) * t) | 0},${(A[2] + (B[2] - A[2]) * t) | 0})`;
-}
-
-export const rgba = (h, a) => { const v = rgbVon(h); return `rgba(${v[0]},${v[1]},${v[2]},${a})`; };

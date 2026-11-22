@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { retarget, blickWinkel, projiziere, MASS } from '../src/rig/retarget.js';
+import { retarget, MASS } from '../src/rig/retarget.js';
 import { haarPalette } from '../src/rig/farben.js';
 
 // Stehende Figur (KayKit-artig, Meter, y oben, schaut nach +z, linke Seite +x), Arme hängen.
@@ -67,20 +67,16 @@ test('Sprung: Figur höher als beim Stehen -> Puppe hebt ab', () => {
     nah(retarget(k).beine[0].fuss.y, -MASS.knoechel);
 });
 
-test('Blickwinkel: Kamera vorne = 0, hinten = PI', () => {
-    nah(blickWinkel(0, { x: 0, z: 0 }, { x: 0, z: 5 }), 0);
-    nah(Math.abs(blickWinkel(Math.PI, { x: 0, z: 0 }, { x: 0, z: 5 })), Math.PI);
-    nah(Math.abs(blickWinkel(0, { x: 0, z: 0 }, { x: 0, z: -5 })), Math.PI);
-    nah(blickWinkel(0, { x: 1, z: 0 }, { x: 1, z: 3 }), 0);
+test('Körper-Achsen: seite nach +x, oben nach -y (Puppe: y unten), vorne nach +z', () => {
+    const g = retarget(stehend());
+    assert.ok(g.seite.x > 0.99 && g.oben.y < -0.99 && g.vorne.z > 0.99);
 });
 
-test('Von vorne liegt die linke Seite der Figur rechts im Bild, von hinten links', () => {
-    const g = retarget(stehend());
-    assert.ok(projiziere(g.arme[1].hand, 0).x > 0);
-    assert.ok(projiziere(g.arme[1].hand, Math.PI).x < 0);
-    // von vorne ist "vorne" näher an der Kamera
-    assert.ok(projiziere({ x: 0, y: 0, z: 10 }, 0).z > 0);
-    assert.ok(projiziere({ x: 0, y: 0, z: 10 }, Math.PI).z < 0);
+test('Hängende Arme werden zum Körper gezogen (Hand unter dem Ellbogen)', () => {
+    const k = stehend();
+    k.lowerarm_l = { x: 0.4, y: 0.9, z: 0 }; k.wrist_l = { x: 0.6, y: 0.85, z: 0 };   // fast waagrecht
+    const g = retarget(k);
+    assert.ok(g.arme[1].hand.y > g.arme[1].ellbogen.y + 10);
 });
 
 test('Haar-Palette: hell > mittel > dunkel, null = Standard', () => {

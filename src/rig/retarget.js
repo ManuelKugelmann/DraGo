@@ -19,7 +19,8 @@ export const MASS = {
     beinBreite: 11,
     oberschenkel: 50, unterschenkel: 50,
     fussLaenge: 14,
-    knoechel: 6       // Knöchel über dem Boden
+    knoechel: 6,      // Knöchel über dem Boden
+    armSenken: [0.8, 0.5]   // KayKit hält die kurzen Arme weit ab: Ober-/Unterarm etwas nach unten ziehen
 };
 
 const sub = (a, b) => ({ x: a.x - b.x, y: a.y - b.y, z: a.z - b.z });
@@ -61,8 +62,9 @@ export function retarget(k, bodenFuss) {
 
     const arm = (s, seite) => {
         const schulter = add(schulterMitte, mal(schulterAchse, seite * MASS.schulterBreite));
-        const ellbogen = add(schulter, mal(richtung(k['upperarm_' + s], k['lowerarm_' + s], UNTEN), MASS.oberarm));
-        const hand = add(ellbogen, mal(richtung(k['lowerarm_' + s], k['wrist_' + s], UNTEN), MASS.unterarm));
+        const senke = (d, f) => einheit(add(d, mal(UNTEN, f)), d);
+        const ellbogen = add(schulter, mal(senke(richtung(k['upperarm_' + s], k['lowerarm_' + s], UNTEN), MASS.armSenken[0]), MASS.oberarm));
+        const hand = add(ellbogen, mal(senke(richtung(k['lowerarm_' + s], k['wrist_' + s], UNTEN), MASS.armSenken[1]), MASS.unterarm));
         return { schulter, ellbogen, hand };
     };
     const beinVon = (s, seite) => {
@@ -73,7 +75,7 @@ export function retarget(k, bodenFuss) {
         return { ansatz, knie, fuss, zehen };
     };
     const g = {
-        huefte, brust, kopf, vorne,
+        huefte, brust, kopf, vorne, seite: schulterAchse, oben: rumpfDir,
         arme: [arm('r', -1), arm('l', 1)],
         beine: [beinVon('r', -1), beinVon('l', 1)]
     };
@@ -90,19 +92,4 @@ function verschiebe(g, d) {
     for (const n of ['huefte', 'brust', 'kopf']) g[n] = add(g[n], d);
     for (const a of g.arme) for (const n in a) a[n] = add(a[n], d);
     for (const b of g.beine) for (const n in b) b[n] = add(b[n], d);
-}
-
-/**
- * Blickwinkel auf die Figur (0 = sieht sie von vorne, ±PI = von hinten).
- * drehung = rotation.y der Figur, figur/kamera = Positionen (x, z) im selben Raum.
- */
-export function blickWinkel(drehung, figur, kamera) {
-    const a = drehung - Math.atan2(kamera.x - figur.x, kamera.z - figur.z);
-    return Math.atan2(Math.sin(a), Math.cos(a));
-}
-
-/** Körper-Raum -> Bild (x nach rechts) und Tiefe (z zur Kamera) bei Blickwinkel w. */
-export function projiziere(p, w) {
-    const c = Math.cos(w), s = Math.sin(w);
-    return { x: p.x * c + p.z * s, y: p.y, z: -p.x * s + p.z * c };
 }

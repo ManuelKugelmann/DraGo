@@ -84,7 +84,7 @@ export default class StartSzene {
         this.figur.obj.visible = true;
         this.figur.setHaar(HAARFARBEN[haarIndex]);
         this.welt.add(this.figur.obj);
-        if (MIT_RIG) (this.rig ??= new RigFigur(this.welt)).nutze(this.figur, HAARFARBEN[haarIndex], SCHUELER[index % SCHUELER.length]);
+        if (MIT_RIG) (this.rig ??= new RigFigur()).nutze(this.figur, HAARFARBEN[haarIndex], SCHUELER[index % SCHUELER.length]);
     }
 
     setHaar(haarIndex) {
@@ -191,7 +191,7 @@ export default class StartSzene {
             }
         }
         if (!ar) this.kamera.lookAt(this.blick);
-        this.rig?.update(dt, ar ? this.renderer.xr.getCamera() : this.kamera);
+        this.rig?.update(dt);
         this.renderer.render(this.scene, this.kamera);
     }
 }
