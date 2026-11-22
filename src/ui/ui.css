@@ -78,3 +78,42 @@ body.drin #ui > .hinter-portal { opacity: 1; pointer-events: auto; }
     .tupfen { width: 28px; height: 28px; }
     .los { padding: 8px 26px; font-size: 24px; }
 }
+
+/* ---------- Ei ausbrüten (Magiestrom) ---------- */
+.brueten { display: none; padding: 12px 30px; border-radius: 22px; font-size: 26px; font-weight: bold; margin-bottom: 14px;
+    background: #9b5cff; box-shadow: 0 5px 0 #4a2380; }
+.hinter-portal.gefunden .brueten { display: block; }
+#ui > #magie { inset: 0; display: none; background: #2b1840 center / cover; }
+body.magie #ui > #magie { display: block; }
+body.magie .nochmal { position: fixed; z-index: 5; top: max(10px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left)); }
+#magie > * { position: absolute; }
+.magie-leinwand { inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.magie-zahl { left: 14%; top: calc(55% + 70px); transform: translateX(-50%); font-size: 26px; font-weight: bold;
+    padding: 4px 14px; border-radius: 14px; background: #24122fcc; color: var(--gold); }
+.magie-waerme { top: max(12px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; gap: 8px;
+    align-items: center; font-size: 24px; padding: 6px 12px; border-radius: 16px; background: #24122fcc; }
+.magie-balken { width: min(50vw, 320px); height: 18px; border-radius: 9px; background: #ffffff22; overflow: hidden; }
+.magie-balken::after { content: ''; display: block; height: 100%; width: calc(var(--wert, 0) * 100%);
+    background: linear-gradient(90deg, #ffb347, #ff6a3c); transition: width 0.6s; }
+.magie-tor { right: max(16px, env(safe-area-inset-right)); top: 50%; transform: translateY(-50%) scale(0.8); opacity: 0;
+    pointer-events: none; transition: 0.25s; padding: 14px 16px; border-radius: 22px; background: #24122fe6;
+    border: 3px solid #9fe3ff; text-align: center; max-width: 44vw; }
+.magie-tor.offen { opacity: 1; transform: translateY(-50%) scale(1); pointer-events: auto; }
+.magie-frage { font-size: 26px; margin-bottom: 12px; }
+.magie-optionen { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.magie-option { min-width: 84px; padding: 12px 16px; border-radius: 16px; font-size: 26px; font-weight: bold;
+    background: #3b6fd9; box-shadow: 0 4px 0 #1d3a7a; }
+.magie-hinweis { left: 50%; top: 22%; transform: translateX(-50%); font-size: 30px; font-weight: bold; opacity: 0;
+    transition: opacity 0.2s; pointer-events: none; padding: 6px 18px; border-radius: 16px; background: #24122fcc; white-space: nowrap; }
+.magie-hinweis.zeigen { opacity: 1; }
+.magie-hinweis.gut { color: #9dffb0; }
+.magie-hinweis.naja { color: var(--gold); }
+.magie-hinweis.gross { font-size: 40px; top: 40%; }
+#magie.ei-wackelt { animation: wackeln 0.5s; }
+#magie.schluepft { animation: wackeln 0.3s 5, blitz 1.8s forwards; }
+@keyframes wackeln { 25% { background-position: calc(50% - 4px) 50%; } 75% { background-position: calc(50% + 4px) 50%; } }
+@keyframes blitz { 80% { filter: brightness(1); } 90% { filter: brightness(3); } 100% { filter: brightness(1.1); } }
+@media (orientation: portrait) {
+    .magie-tor { right: 50%; top: auto; bottom: max(20px, env(safe-area-inset-bottom)); transform: translateX(50%) scale(0.8); max-width: 90vw; }
+    .magie-tor.offen { transform: translateX(50%) scale(1); }
+}

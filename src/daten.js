@@ -15,7 +15,14 @@ export const TEXTE = {
     ar_hinweis: 'Zeig auf den Boden und tippe!',
     ei_suchen: 'Hier ist irgendwo dein Drachenei versteckt. Such es!',
     ei_gefunden: 'Du hast dein erstes Drachenei gefunden!',
-    nochmal: '↩'
+    nochmal: '↩',
+    ausbrueten: 'Ausbrüten ✨',
+    magie_schaetzen: 'Was gibt mehr Funken?',
+    magie_richtig: 'Super!',
+    magie_naja: 'Geht auch!',
+    magie_falsch: 'Knapp daneben!',
+    magie_neu: 'Neue Funken!',
+    magie_geschluepft: 'Dein Drache schlüpft!'
 };
 
 // Spielfiguren (3D, KayKit Adventurers, CC0). datei = Datei in public/figuren/.
@@ -32,6 +39,18 @@ export const FIGUREN = [
 export const EI_VERSTECK = { links: 9, oben: 44 };
 
 export const HAARFARBEN = [null, 0x1c1410, 0x3b2416, 0x6a4128, 0x9a6a3e, 0xd9b26a, 0xb5532a, 0xc9c4bc];
+
+// Magiestrom-Spiel (Ei ausbrüten).
+// start = Funken am Anfang, ziel = Wärme zum Schlüpfen, bonus = mal so viel bei richtiger Antwort,
+// schatten_start / schatten_plus = Schatten-Funken in der ersten Runde / mehr pro Runde.
+export const MAGIE = { start: 3, ziel: 60, bonus: 2, schatten_start: 2, schatten_plus: 2 };
+
+// Vokabeln für Frage-Tore (deutsch -> englisch). Einfach Zeilen dazuschreiben!
+export const VOKABELN = [
+    { de: 'Drache', en: 'dragon' }, { de: 'Ei', en: 'egg' }, { de: 'Hund', en: 'dog' }, { de: 'Katze', en: 'cat' },
+    { de: 'Haus', en: 'house' }, { de: 'Baum', en: 'tree' }, { de: 'Schule', en: 'school' }, { de: 'Buch', en: 'book' },
+    { de: 'Freund', en: 'friend' }, { de: 'Wasser', en: 'water' }, { de: 'Feuer', en: 'fire' }, { de: 'Stern', en: 'star' }
+];
 
 // Drachen-Arten. Der Mehrspieler schickt nur diese Namen übers Netz.
 export const DRACHEN = {

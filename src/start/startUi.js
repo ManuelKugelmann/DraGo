@@ -2,6 +2,7 @@
 import { TEXTE, FIGUREN, HAARFARBEN, EI_VERSTECK } from '../daten.js';
 import { kameraAn, kameraAus } from './kamera.js';
 import { arMoeglich, arSitzung } from './ar.js';
+import MagieStrom from '../magiestrom/MagieStrom.js';
 
 const SPEICHER = 'drago_spieler';
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
@@ -106,7 +107,17 @@ export function baueStartUi(szene, leinwand) {
     glitzer.style.top = EI_VERSTECK.oben + '%';
     glitzer.setAttribute('aria-label', 'Glitzern');
     const nochmal = el('button', 'nochmal', TEXTE.nochmal);
-    hinter.append(glitzer, text, nochmal);
+    const brueten = el('button', 'brueten', TEXTE.ausbrueten);
+    hinter.append(glitzer, text, brueten, nochmal);
+    const magieEbene = el('div', '');
+    magieEbene.id = 'magie';
+    magieEbene.style.backgroundImage = 'url(img/splash.webp)';
+    let magie = null;
+    brueten.onclick = () => {
+        magie = new MagieStrom(magieEbene);
+        document.body.classList.add('magie');
+        magie.spielen();
+    };
     const mitName = t => (wahl.name ? `${wahl.name}, ${t[0].toLowerCase()}${t.slice(1)}` : t);
     const zeigeHoehle = () => {
         hinter.style.backgroundImage = 'url(img/hoehle.webp)';
@@ -127,11 +138,12 @@ export function baueStartUi(szene, leinwand) {
         });
     };
     nochmal.onclick = () => {
-        document.body.classList.remove('drin', 'unterwegs');
+        magie?.beenden(); magie = null;
+        document.body.classList.remove('drin', 'unterwegs', 'magie');
         szene.zuruecksetzen();
     };
 
     leinwand.addEventListener('pointerdown', () => szene.winken());
-    ui.append(titel, name, links, rechts, kamera, ar, arHinweis, meldung, unten, hinter);
+    ui.append(titel, name, links, rechts, kamera, ar, arHinweis, meldung, unten, hinter, magieEbene);
     szene.zeige(wahl.figur, wahl.haar);
 }

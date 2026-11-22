@@ -14,9 +14,15 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 - 📷 wechselt: Rückkamera → Frontkamera → aus. **AR** (nur Android Chrome): Boden antippen, Tor steht dort fest.
 - Figur antippen: dreht sich um und jubelt. **Los!**: läuft durchs Tor in eine Höhle.
 - In der Höhle ist das Ei **versteckt**, nur ein Glitzern verrät es. Antippen = gefunden.
+- **Ausbrüten (Magiestrom):** Funken-Kugel links, Ei in der Mitte. Tore: „Was gibt mehr Funken?“ (z. B. × 2 oder + 4),
+  Einmaleins- und Vokabel-Fragen (richtig = doppelt). Schatten-Funken löschen eigene aus, der Rest wärmt das Ei.
+  Wärme-Balken voll = Drache schlüpft (noch ohne Drachen-Grafik). Zahlen und Vokabeln in `src/daten.js`.
 
 ## Entscheidungen
 
+- 2026-11-22: Magiestrom = **Lernspiel**: richtiges Ergebnis / Vokabel wählen oder **abschätzen, welche Rechnung
+  mehr gibt**. **Gegenpartikel löschen eigene aus.**
+- 2026-11-22: Figuren-Look: **Pinselstriche im Shader** (Option 1).
 - 2026-11-22: **Magiestrom-Spiel**, um das Drachenei zum **Schlüpfen** zu bringen.
 - 2026-11-22: Startpunkte aus den Referenzen: **Drachen aus Chat A** (Rig-Test), **Figuren-Rig aus Chat B**.
 - 2026-11-22: Drachen und Eier **erscheinen auf der Weltkarte** in einer **Blitz-Kugel** (Teleport mit Blitzen).
