@@ -1,3 +1,58 @@
-html, body { margin: 0; height: 100%; background: #1a0f2a; overflow: hidden;
-    user-select: none; -webkit-user-select: none; touch-action: none; overscroll-behavior: none; }
-#app { width: 100vw; height: 100vh; height: 100dvh; }
+:root { --gold: #ffd27a; --dunkel: #24122f; --lila: #2b1840; }
+html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior: none;
+    user-select: none; -webkit-user-select: none; touch-action: none;
+    font-family: 'Fredoka', 'Trebuchet MS', system-ui, sans-serif; color: #fff7e6;
+    background: linear-gradient(#7fa8d8 0%, #f3c9a0 55%, #8a6a5a 56%, #4a3448 100%); }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; -webkit-tap-highlight-color: transparent; }
+button:active { translate: 0 2px; }
+
+#kamera { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+body.kamera #kamera { display: block; }
+#welt { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+#ui { position: fixed; inset: 0; pointer-events: none; }
+#ui > * { pointer-events: auto; position: absolute; }
+
+.titel { pointer-events: none !important; top: max(6px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); margin: 0;
+    font-size: clamp(34px, 9vmin, 72px); color: var(--gold); pointer-events: none;
+    text-shadow: 0 4px 0 #6b2a0c, 0 0 24px #ff9a3c88; }
+.name { top: calc(max(6px, env(safe-area-inset-top)) + clamp(44px, 11vmin, 88px)); left: 50%; transform: translateX(-50%);
+    width: min(70vw, 280px); box-sizing: border-box; padding: 8px 14px; border-radius: 16px; border: 3px solid var(--gold);
+    font: inherit; font-size: 22px; text-align: center; background: #2b1840cc; color: #fff; outline: none; user-select: text; }
+.name::placeholder { color: #fff9; }
+
+.pfeil { top: 50%; width: 64px; height: 64px; border-radius: 50%; font-size: 28px;
+    background: #2b1840cc; box-shadow: 0 4px 0 #0008; transform: translateY(-50%); }
+.pfeil.links { left: max(12px, env(safe-area-inset-left)); }
+.pfeil.rechts { right: max(12px, env(safe-area-inset-right)); }
+
+.kamera-knopf { top: max(10px, env(safe-area-inset-top)); right: max(10px, env(safe-area-inset-right));
+    width: 54px; height: 54px; border-radius: 50%; font-size: 26px; background: #2b1840cc; box-shadow: 0 4px 0 #0008; }
+body.kamera .kamera-knopf { background: var(--gold); }
+
+.unten { left: 0; right: 0; bottom: max(10px, env(safe-area-inset-bottom)); display: flex; align-items: center;
+    justify-content: center; gap: 14px; flex-wrap: wrap; padding: 0 10px; }
+.farben { display: flex; gap: 8px; padding: 8px 10px; border-radius: 30px; background: #2b1840aa; }
+.tupfen { width: 34px; height: 34px; border-radius: 50%; border: 3px solid var(--dunkel); }
+.tupfen.original { background: conic-gradient(#e8562a, #f2c94c, #5aa8ff, #9b5cff, #e8562a); }
+.tupfen.an { border-color: #fff; box-shadow: 0 0 0 3px var(--gold); }
+.los { padding: 12px 34px; border-radius: 22px; font-size: 28px; font-weight: bold;
+    background: #2f9e5b; box-shadow: 0 5px 0 #145a30; }
+
+body.unterwegs .pfeil, body.unterwegs .unten, body.unterwegs .name { display: none; }
+
+.hinter-portal { inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    padding-bottom: 8vh; background: #2b1840 center / cover; opacity: 0; transition: opacity 0.8s; }
+#ui > .hinter-portal { pointer-events: none; }
+.hinter-portal h2 { margin: 0 0 16px; font-size: clamp(24px, 6vmin, 44px); color: var(--gold); text-align: center;
+    text-shadow: 0 3px 0 #6b2a0c; padding: 6px 18px; border-radius: 18px; background: #24122fcc; }
+.nochmal { width: 60px; height: 60px; border-radius: 50%; font-size: 28px; background: #2b1840cc; }
+body.drin #ui > .hinter-portal { opacity: 1; pointer-events: auto; }
+
+@media (orientation: portrait) {
+    }
+@media (orientation: landscape) and (max-height: 500px) {
+    .name { top: max(8px, env(safe-area-inset-top)); left: max(12px, env(safe-area-inset-left)); transform: none; width: 200px; font-size: 18px; }
+    .titel { font-size: 40px; }
+    .tupfen { width: 28px; height: 28px; }
+    .los { padding: 8px 26px; font-size: 24px; }
+}

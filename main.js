@@ -1,12 +1,7 @@
-import Phaser from 'phaser';
-import Start from './src/Start.js';
+import StartSzene from './src/start/StartSzene.js';
+import { baueStartUi } from './src/start/startUi.js';
 
-new Phaser.Game({
-    type: Phaser.AUTO,
-    parent: 'app',
-    backgroundColor: '#1a0f2a',
-    scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
-    scene: [Start]
-});
+const leinwand = document.getElementById('welt');
+baueStartUi(new StartSzene(leinwand), leinwand);
 
 console.info(`DraGo ${__VERSION__} (${__BUILD__})`);

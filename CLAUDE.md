@@ -1,7 +1,7 @@
 # DraGo – Arbeitsanweisungen
 
 Drachen-Spiel für Kinder. Installierbare PWA (Handy quer zuerst), statisch auf GitHub Pages.
-Phaser 4 (WebGL) + Vite, einfaches JavaScript (ESM). Mehrspieler peer-to-peer über Trystero.
+three.js (3D, WebGL) + Vite, einfaches JavaScript (ESM). Mehrspieler peer-to-peer über Trystero.
 
 ## Wer gibt die Richtung vor
 
@@ -47,16 +47,20 @@ Ideen. Was die Kinder entscheiden, gilt.
 - Kleine Dateien, eine Aufgabe pro Datei, kein toter Code.
 
 ```
-main.js            Phaser-Start (Scale RESIZE: quer und hoch)
-src/daten.js       Texte, Drachen, Farben (Kinder ändern hier)
-src/Start.js       Startbild: Bild, Titel, Glitzer, Figur + Haarfarbe wählen
-src/Figur.js       Platzhalter-Spielfigur (Anime-Chibi, Haare umfärbbar)
-src/ui/ui.css      Seiten-Stil
-src/net/           Mehrspieler, fertig aber noch nicht eingebaut: Netz (Trystero),
-                   geheim (Raumname), schluessel (PBKDF2), nachricht (Prüfung)
-public/            manifest.json, img/
-scripts/           gen-icons.mjs, serve.mjs
-tests/             node --test
+main.js                 Start: 3D-Szene + Knöpfe
+src/daten.js            Texte, Figuren, Haarfarben (Kinder ändern hier)
+src/start/StartSzene.js 3D-Startbild: Figur von hinten, Portal, Durchlaufen
+src/start/Figur3D.js    Figur laden (glb), Bewegungen, Haare umfärben
+src/start/haar.js       Haar-Farbfeld umfärben (rein, getestet)
+src/start/Portal.js     Ring-Tor mit Wasser-Shader
+src/start/startUi.js    Name, Pfeile, Haarfarben, Kamera, Los
+src/start/kamera.js     Kamerabild als Hintergrund
+src/ui/ui.css           Seiten-Stil
+src/net/                Mehrspieler, fertig aber noch nicht eingebaut
+public/figuren/         KayKit-Figuren (CC0), erzeugt mit scripts/prep-figuren.mjs
+public/img/             Bilder (FLUX)
+scripts/                gen-icons.mjs, prep-figuren.mjs, serve.mjs
+tests/                  node --test
 ```
 
 ## Befehle
@@ -78,4 +82,4 @@ npm test
 ## Prüfen
 
 Build + Tests grün, dann im Browser ansehen (Desktop quer + Handy-Emulation). Mehrspieler (wenn eingebaut):
-zwei Tabs mit `?anon`, gleicher Raumname. Altes Beispiel mit Höhle + Freunden: Commit `11c5823`.
+zwei Tabs mit `?anon`, gleicher Raumname. Altes 2D-Beispiel (Phaser) mit Höhle + Freunden: Commit `11c5823`.

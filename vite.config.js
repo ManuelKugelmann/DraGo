@@ -20,7 +20,7 @@ export default defineConfig(({ command }) => ({
             manifest: false, // eigenes public/manifest.json
             workbox: {
                 cleanupOutdatedCaches: true,
-                globPatterns: ['**/*.{js,css,html,ico,png,jpg,webp,svg,wav,mp3,ogg,woff2}'],
+                globPatterns: ['**/*.{js,css,html,ico,png,jpg,webp,svg,wav,mp3,ogg,woff2,glb}'],
                 maximumFileSizeToCacheInBytes: 10_000_000
             },
             devOptions: { enabled: false }
