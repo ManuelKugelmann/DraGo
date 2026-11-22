@@ -11,10 +11,12 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 
 - Startbild in 3D: Kamerabild als Hintergrund, davor ein Ring-Tor. Hinter dem Wasser sieht man das Ei.
 - Namen eingeben, Figur mit ◀ ▶ wählen (4 niedliche Figuren, keine Klassen), natürliche Haarfarben.
+- 📷 wechselt: Rückkamera → Frontkamera → aus. **AR** (nur Android Chrome): Boden antippen, Tor steht dort fest.
 - Figur antippen: dreht sich um und jubelt. **Los!**: läuft durchs Tor, dann „Dein erstes Drachenei!“
 
 ## Entscheidungen
 
+- 2026-11-22: **Tor in der echten Welt verankern** (AR).
 - 2026-11-22: Portal wie ein **Ring-Tor** (Stargate-artig), **über dem Kamerabild** (AR-artig).
 - 2026-11-22: **Keine Klassen**, nur Aussehen wählen. **Name** eingeben. **Natürliche Haarfarben**.
 - 2026-11-22: Figuren **niedlich** (KayKit, 3D).

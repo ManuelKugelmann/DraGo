@@ -9,6 +9,7 @@ const PORTAL_Z = -6;
 const LAUF_TEMPO = 2.6;      // Meter pro Sekunde beim Losgehen
 const DREH_TEMPO = 8;        // wie schnell die Figur sich umdreht
 const START_KAMERA = [0, 1.9, 5.2];
+const AR_MASSSTAB = 0.35;    // in AR: Figur ca. 50 cm, Tor ca. 2 m entfernt
 
 export default class StartSzene {
     constructor(leinwand) {
@@ -33,11 +34,23 @@ export default class StartSzene {
         const boden = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.ShadowMaterial({ opacity: 0.3 }));
         boden.rotation.x = -Math.PI / 2;
         boden.receiveShadow = true;
-        this.scene.add(boden);
+        // Alles, was in AR auf den echten Boden gestellt wird
+        this.welt = new THREE.Group();
+        this.scene.add(this.welt);
+        this.welt.add(boden);
 
         this.portal = new Portal(1.5);
         this.portal.obj.position.set(0, 1.6, PORTAL_Z);
-        this.scene.add(this.portal.obj);
+        this.welt.add(this.portal.obj);
+
+        // AR: Ring auf dem erkannten Boden, dort wird das Tor hingestellt
+        this.marke = new THREE.Mesh(new THREE.RingGeometry(0.12, 0.16, 32).rotateX(-Math.PI / 2),
+            new THREE.MeshBasicMaterial({ color: 0xffd27a }));
+        this.marke.matrixAutoUpdate = false;
+        this.marke.visible = false;
+        this.scene.add(this.marke);
+        this.hitQuelle = null;
+        this.platziert = true;
 
         this.figuren = [];          // geladene Figuren, Index = FIGUREN-Index
         this.figur = null;
@@ -48,7 +61,7 @@ export default class StartSzene {
 
         addEventListener('resize', () => this.groesse());
         this.groesse();
-        this.renderer.setAnimationLoop(t => this.schritt(t));
+        this.renderer.setAnimationLoop((t, frame) => this.schritt(t, frame));
     }
 
     groesse() {
@@ -62,13 +75,13 @@ export default class StartSzene {
 
     async zeige(index, haarIndex) {
         if (!this.figuren[index]) this.figuren[index] = await Figur3D.laden('figuren/' + FIGUREN[index].datei);
-        if (this.figur) this.scene.remove(this.figur.obj);
+        if (this.figur) this.welt.remove(this.figur.obj);
         this.figur = this.figuren[index];
         this.figur.obj.position.set(0, 0, 0);
         this.figur.obj.rotation.y = Math.PI;
         this.figur.obj.visible = true;
         this.figur.setHaar(HAARFARBEN[haarIndex]);
-        this.scene.add(this.figur.obj);
+        this.welt.add(this.figur.obj);
     }
 
     setHaar(haarIndex) { this.figur?.setHaar(HAARFARBEN[haarIndex]); }
@@ -100,7 +113,58 @@ export default class StartSzene {
         this.kamera.position.set(...START_KAMERA);
     }
 
-    schritt(zeit) {
+    // ---------- AR (WebXR, Android Chrome) ----------
+
+    /** AR-Sitzung übernehmen: Boden suchen, beim Antippen das Tor dort hinstellen. */
+    async arStart(session, beiEnde) {
+        const r = this.renderer;
+        r.xr.enabled = true;
+        r.xr.setReferenceSpaceType('local');
+        await r.xr.setSession(session);
+        const viewer = await session.requestReferenceSpace('viewer');
+        this.hitQuelle = await session.requestHitTestSource({ space: viewer });
+        this.platziert = false;
+        this.welt.visible = false;
+        session.addEventListener('select', () => (this.platziert ? this.winken() : this.arPlatziere()));
+        session.addEventListener('end', () => {
+            r.xr.enabled = false;
+            this.hitQuelle = null;
+            this.platziert = true;
+            this.marke.visible = false;
+            this.welt.position.set(0, 0, 0);
+            this.welt.rotation.set(0, 0, 0);
+            this.welt.scale.setScalar(1);
+            this.welt.visible = true;
+            this.zuruecksetzen();
+            this.groesse();
+            beiEnde?.();
+        });
+    }
+
+    arPlatziere() {
+        if (!this.marke.visible) return;
+        const ziel = new THREE.Vector3().setFromMatrixPosition(this.marke.matrix);
+        const auge = new THREE.Vector3().setFromMatrixPosition(this.renderer.xr.getCamera().matrixWorld);
+        const dx = ziel.x - auge.x, dz = ziel.z - auge.z;
+        this.welt.position.copy(ziel);
+        this.welt.rotation.set(0, Math.atan2(-dx, -dz), 0);   // Tor zeigt vom Betrachter weg
+        this.welt.scale.setScalar(AR_MASSSTAB);
+        this.welt.visible = true;
+        this.marke.visible = false;
+        this.platziert = true;
+        this.beiPlatziert?.();
+    }
+
+    arSuche(frame) {
+        const hits = frame.getHitTestResults(this.hitQuelle);
+        const pose = hits[0]?.getPose(this.renderer.xr.getReferenceSpace());
+        this.marke.visible = !!pose;
+        if (pose) this.marke.matrix.fromArray(pose.transform.matrix);
+    }
+
+    schritt(zeit, frame) {
+        if (frame && this.hitQuelle && !this.platziert) this.arSuche(frame);
+        const ar = this.renderer.xr.isPresenting;
         this.uhr.update(zeit);
         const dt = Math.min(this.uhr.getDelta(), 0.05);
         this.portal.update(dt);
@@ -111,7 +175,7 @@ export default class StartSzene {
             r.y += (this.drehZiel - r.y) * Math.min(1, dt * DREH_TEMPO);
             if (this.laeuft) {
                 f.obj.position.z -= LAUF_TEMPO * dt;
-                this.kamera.position.z = Math.max(PORTAL_Z + 3, this.kamera.position.z - LAUF_TEMPO * dt * 0.8);
+                if (!ar) this.kamera.position.z = Math.max(PORTAL_Z + 3, this.kamera.position.z - LAUF_TEMPO * dt * 0.8);
                 if (f.obj.position.z < PORTAL_Z + 0.2 && f.obj.visible) {
                     f.obj.visible = false;
                     this.portal.stoss();
@@ -120,7 +184,7 @@ export default class StartSzene {
                 }
             }
         }
-        this.kamera.lookAt(this.blick);
+        if (!ar) this.kamera.lookAt(this.blick);
         this.renderer.render(this.scene, this.kamera);
     }
 }

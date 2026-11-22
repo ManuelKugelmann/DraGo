@@ -1,6 +1,7 @@
 // Knöpfe und Eingaben über dem 3D-Bild: Name, Figur, Haarfarbe, Kamera, Los.
 import { TEXTE, FIGUREN, HAARFARBEN } from '../daten.js';
 import { kameraAn, kameraAus } from './kamera.js';
+import { arMoeglich, arSitzung } from './ar.js';
 
 const SPEICHER = 'drago_spieler';
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; };
@@ -54,14 +55,44 @@ export function baueStartUi(szene, leinwand) {
     const markiere = () => tupfen.forEach((t, i) => t.classList.toggle('an', i === wahl.haar));
     markiere();
 
-    // Kamerabild als Hintergrund: gleich beim Start versuchen, Knopf schaltet um.
+    // Kamerabild als Hintergrund: gleich beim Start versuchen.
+    // Knopf wechselt: Rückkamera -> Frontkamera -> aus -> Rückkamera ...
     const kamera = el('button', 'kamera-knopf', TEXTE.kamera);
-    const schalte = async an => {
-        if (an && await kameraAn()) document.body.classList.add('kamera');
-        else { kameraAus(); document.body.classList.remove('kamera'); }
+    const meldung = el('div', 'meldung');
+    const melde = text => {
+        meldung.textContent = text;
+        meldung.classList.add('zeigen');
+        clearTimeout(melde.t);
+        melde.t = setTimeout(() => meldung.classList.remove('zeigen'), 2500);
     };
-    kamera.onclick = () => schalte(!document.body.classList.contains('kamera'));
-    schalte(true);
+    let modus = 'aus';
+    const setzeModus = async (neu, still = false) => {
+        modus = neu;
+        if (neu !== 'aus' && await kameraAn(neu)) { document.body.classList.add('kamera'); return; }
+        kameraAus();
+        document.body.classList.remove('kamera');
+        if (neu !== 'aus') { modus = 'aus'; if (!still) melde(TEXTE.kamera_fehler); }
+    };
+    kamera.onclick = () => setzeModus({ aus: 'environment', environment: 'user', user: 'aus' }[modus]);
+    setzeModus('environment', true);
+
+    // Echtes AR (nur wo verfügbar): Tor auf den echten Boden stellen.
+    const ar = el('button', 'ar-knopf', TEXTE.ar);
+    const arHinweis = el('div', 'ar-hinweis', TEXTE.ar_hinweis);
+    ar.onclick = async () => {
+        if (document.body.classList.contains('ar')) { szene.renderer.xr.getSession()?.end(); return; }
+        try {
+            const session = await arSitzung(ui);
+            kameraAus();
+            document.body.classList.remove('kamera', 'drin', 'unterwegs');
+            document.body.classList.add('ar', 'ar-suchen');
+            szene.beiPlatziert = () => document.body.classList.remove('ar-suchen');
+            await szene.arStart(session, () => document.body.classList.remove('ar', 'ar-suchen'));
+        } catch (e) { console.warn('AR:', e); }
+    };
+    arMoeglich().then(ja => { if (ja) document.body.classList.add('ar-geht'); });
+    // Tippen auf Knöpfe soll in AR nicht das Tor versetzen
+    ui.addEventListener('beforexrselect', e => e.preventDefault());
 
     const los = el('button', 'los', TEXTE.los);
     const unten = el('div', 'unten');
@@ -86,6 +117,6 @@ export function baueStartUi(szene, leinwand) {
     };
 
     leinwand.addEventListener('pointerdown', () => szene.winken());
-    ui.append(titel, name, links, rechts, kamera, unten, hinter);
+    ui.append(titel, name, links, rechts, kamera, ar, arHinweis, meldung, unten, hinter);
     szene.zeige(wahl.figur, wahl.haar);
 }

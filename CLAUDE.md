@@ -54,7 +54,8 @@ src/start/Figur3D.js    Figur laden (glb), Bewegungen, Haare umfärben
 src/start/haar.js       Haar-Farbfeld umfärben (rein, getestet)
 src/start/Portal.js     Ring-Tor mit Wasser-Shader
 src/start/startUi.js    Name, Pfeile, Haarfarben, Kamera, Los
-src/start/kamera.js     Kamerabild als Hintergrund
+src/start/kamera.js     Kamerabild als Hintergrund (hinten/vorne)
+src/start/ar.js         WebXR-AR: Tor auf echten Boden stellen (Android Chrome)
 src/ui/ui.css           Seiten-Stil
 src/net/                Mehrspieler, fertig aber noch nicht eingebaut
 public/figuren/         KayKit-Figuren (CC0), erzeugt mit scripts/prep-figuren.mjs

@@ -10,6 +10,9 @@ export const TEXTE = {
     name_platzhalter: 'Dein Name',
     los: 'Los!',
     kamera: '📷',
+    kamera_fehler: 'Kamera geht nicht – erlaubt?',
+    ar: 'AR',
+    ar_hinweis: 'Zeig auf den Boden und tippe!',
     hinter_portal: 'Dein erstes Drachenei!',
     nochmal: '↩'
 };
