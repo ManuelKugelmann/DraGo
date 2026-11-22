@@ -104,11 +104,12 @@ export function staerke(sekunden, grenzen = [90, 180]) {
     return 1;
 }
 
-// ---------- Echtzeit: Schatten kommen ständig, Funken wärmen das Ei ----------
-// m = MAGIE aus daten.js: start (Funken), ziel (Wärme), schatten_start / schatten_plus (pro Sekunde, + pro 10 s),
-// waerme (Wärme pro Funke und Sekunde). 0 Funken = das Feuer ist aus = verloren.
+// ---------- Echtzeit: Wettrennen Funken (Wärme) gegen Schatten (Kälte) ----------
+// m = MAGIE aus daten.js: start (Funken), start_waerme, ziel (Wärme zum Schlüpfen),
+// waerme (Wärme pro Funke und Sekunde), schatten_start / schatten_plus (Schatten pro Sekunde, + pro 10 s),
+// kaelte (Wärme, die ein Schatten löscht). Wärme 0 = Ei kalt = verloren.
 
-export const neuerZustand = m => ({ n: m.start, warm: 0, zeit: 0, schattenRest: 0 });
+export const neuerZustand = m => ({ n: m.start, warm: m.start_waerme, zeit: 0, schattenRest: 0 });
 
 /** Wie viele neue Schatten in dt starten (werden mit der Zeit mehr). */
 export function neueSchatten(z, dt, m) {
@@ -118,19 +119,20 @@ export function neueSchatten(z, dt, m) {
     return k;
 }
 
-/** Ein Schatten kommt an und löscht einen Funken. */
-export function treffer(z) {
-    if (z.n > 0) z.n--;
+/** Ein Schatten erreicht das Ei und löscht Wärme. */
+export function treffer(z, m) {
+    z.warm = Math.max(0, z.warm - m.kaelte);
+    if (z.warm === 0) z.kalt = true;   // einmal ganz kalt = verloren (auch wenn Funken danach wieder heizen)
 }
 
-/** Die kreisenden Funken wärmen das Ei: je mehr Funken, desto schneller. */
+/** Die kreisenden Funken heizen das Ei: je mehr Funken, desto schneller. */
 export function waermen(z, dt, m) {
     z.warm += z.n * m.waerme * dt;
 }
 
-/** 'laeuft' | 'geschluepft' | 'aus' (keine Funken mehr) */
+/** 'laeuft' | 'geschluepft' | 'kalt' */
 export function stand(z, m) {
     if (z.warm >= m.ziel) return 'geschluepft';
-    if (z.n <= 0) return 'aus';
+    if (z.kalt || z.warm <= 0) return 'kalt';
     return 'laeuft';
 }

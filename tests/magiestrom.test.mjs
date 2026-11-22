@@ -89,20 +89,21 @@ test('Stufen: Klasse aus Alter, Klasse 1 ohne Vokabeln, Aufgaben im Rahmen', asy
     }
 });
 
-test('Echtzeit: Schatten löschen Funken, Funken wärmen, 0 Funken = aus', async () => {
+test('Echtzeit: Funken heizen, Schatten löschen Wärme, Wärme 0 = kalt', async () => {
     const { neuerZustand, neueSchatten, treffer, waermen, stand } = await import('../src/magiestrom/regeln.js');
-    const m = { start: 2, ziel: 10, schatten_start: 1, schatten_plus: 1, waerme: 0.5 };
+    const m = { start: 2, start_waerme: 3, ziel: 10, waerme: 0.5, schatten_start: 1, schatten_plus: 1, kaelte: 2 };
     const z = neuerZustand(m);
     waermen(z, 2, m);
-    assert.equal(z.warm, 2);
-    treffer(z);
-    assert.equal(z.n, 1);
+    assert.equal(z.warm, 5);
+    treffer(z, m);
+    assert.equal(z.warm, 3);
     assert.equal(stand(z, m), 'laeuft');
-    treffer(z); treffer(z);
-    assert.equal(z.n, 0);
-    assert.equal(stand(z, m), 'aus');
+    treffer(z, m); treffer(z, m);
+    assert.equal(z.warm, 0);
+    waermen(z, 0.1, m);                 // Funken heizen danach weiter – bleibt trotzdem verloren
+    assert.equal(stand(z, m), 'kalt');
     assert.equal(neueSchatten(z, 2, m), 2);
-    z.n = 5; z.warm = 10;
+    z.warm = 10;
     assert.equal(stand(z, m), 'geschluepft');
 });
 

@@ -1,7 +1,7 @@
-// Magiestrom-Spiel in Echtzeit: Schatten-Funken kommen ständig von außen (mit der Zeit immer mehr).
-// Eigene Funken kreisen um das Ei, wärmen es (je mehr, desto schneller) und fangen Schatten ab.
+// Magiestrom-Spiel in Echtzeit, ein Wettrennen: Eigene Funken kreisen um das Ei und heizen es
+// (je mehr, desto schneller). Schatten kommen ständig von außen (mit der Zeit immer mehr) und löschen Wärme.
 // Der Frage-Kasten unten ist die Feuerquelle: gelöste Aufgaben schicken neue Funken von dort zum Ei.
-// Ei warm genug: Risse, aufbrechen, zufälliger Babydrache. 0 Funken: Feuer aus – nochmal!
+// Ei warm genug: Risse, aufbrechen, zufälliger Babydrache. Wärme 0: Ei kalt – nochmal!
 import { zufallsTor, nachTor, staerke, neuerZustand, neueSchatten, treffer, waermen, stand } from './regeln.js';
 import { stufe } from './stufen.js';
 import { MAGIE, VOKABELN, TEXTE, DRACHEN } from '../daten.js';
@@ -228,22 +228,14 @@ export default class MagieStrom {
         // Schatten fliegen zum Ei; am Ring: Treffer
         for (const a of this.angreifer) {
             a.t += dt / FLUG;
-            const k = Math.min(1, a.t), ringK = 1 - (Math.max(e.rx, e.ry) * 1.4) / Math.max(this.w, this.h) / 0.6;
+            const k = Math.min(1, a.t), ringK = 1 - (Math.max(e.rx, e.ry) * 0.7) / Math.max(this.w, this.h) / 0.6;
             a.x = a.x0 + (e.x - a.x0) * k; a.y = a.y0 + (e.y - a.y0) * k;
             if (k < ringK || a.weg) continue;
             a.weg = true;
             if (!this.laeuft) continue;
-            treffer(z);
-            if (this.kreis.length) {
-                let best = 0, bestD = Infinity;
-                this.kreis.forEach((q, i) => { const p = this.kreisPos(q, t); const d = Math.hypot(p.x - a.x, p.y - a.y); if (d < bestD) { bestD = d; best = i; } });
-                const p = this.kreisPos(this.kreis[best], t);
-                this.kreis.splice(best, 1);
-                for (let i = 0; i < 6; i++) this.glitzer(p.x, p.y, 'licht');
-            } else {
-                this.wurzel.classList.add('ei-wackelt');
-                setTimeout(() => this.wurzel.classList.remove('ei-wackelt'), 300);
-            }
+            treffer(z, MAGIE);
+            this.wurzel.classList.add('ei-wackelt');
+            setTimeout(() => this.wurzel.classList.remove('ei-wackelt'), 250);
             for (let i = 0; i < 5; i++) this.glitzer(a.x, a.y, 'puff');
         }
         this.angreifer = this.angreifer.filter(a => !a.weg);
