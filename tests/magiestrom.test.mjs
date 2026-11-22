@@ -107,3 +107,11 @@ test('Echtzeit: Schatten löschen Funken, dann kühlen sie das Ei; Zeit abgelauf
     z.warm = 10;
     assert.equal(stand(z, m), 'geschluepft');
 });
+
+test('Schätz-Tor: immer Plus gegen Mal', () => {
+    for (let n = 1; n < 40; n++) {
+        const t = schaetzTor(n);
+        const zeichen = t.optionen.map(o => o[0]).sort().join('');
+        assert.equal(zeichen, '+×');
+    }
+});

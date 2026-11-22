@@ -18,6 +18,7 @@ export const TEXTE = {
     nochmal: '↩',
     ausbrueten: 'Ausbrüten ✨',
     magie_schaetzen: 'Was gibt mehr Funken?',
+    magie_du_hast: 'Du hast gerade',
     magie_richtig: 'Super!',
     magie_naja: 'Geht auch!',
     magie_falsch: 'Knapp daneben!',
@@ -58,8 +59,8 @@ export const HAARFARBEN = [null, 0x1c1410, 0x3b2416, 0x6a4128, 0x9a6a3e, 0xd9b26
 // schatten_start = Schatten pro Sekunde am Anfang, schatten_plus = so viel mehr pro 10 Sekunden,
 // aufnahme = Anteil der Funken, der pro Sekunde ins Ei fliegt, kaelte = Wärme-Verlust je Schatten am Ei,
 // sterne = Sekunden bis zum Schlüpfen für ⭐⭐⭐ und ⭐⭐ (schneller = stärkerer Drache).
-export const MAGIE = { start: 5, ziel: 60, zeit: 90, bonus: 2, schatten_start: 0.6, schatten_plus: 0.3,
-    aufnahme: 0.25, kaelte: 2, sterne: [45, 70] };
+export const MAGIE = { start: 8, ziel: 60, zeit: 90, bonus: 2, schatten_start: 1.5, schatten_plus: 0.4,
+    aufnahme: 0.2, kaelte: 2, sterne: [45, 70] };
 
 // Vokabeln für Frage-Tore (deutsch -> englisch). Einfach Zeilen dazuschreiben!
 export const VOKABELN = [

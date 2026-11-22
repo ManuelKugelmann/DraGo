@@ -167,11 +167,13 @@ export default class StartSzene {
         cam.position.set(0, 0.85, 3.6);
         cam.lookAt(0, 0.78, 0);
         f.rotation.y = 0.4; f.position.set(0, 0, 0); f.visible = true;
-        this.portal.obj.visible = false; this.boden.visible = false;
+        const hoehleSichtbar = this.hoehle.obj.visible;
+        this.portal.obj.visible = false; this.boden.visible = false; this.hoehle.obj.visible = false;
         r.render(this.scene, cam);
+        this.hoehle.obj.visible = hoehleSichtbar;
         const url = r.domElement.toDataURL('image/png');
         f.rotation.y = alt.dreh; f.position.copy(alt.pos); f.visible = alt.sicht;
-        this.portal.obj.visible = true; this.boden.visible = true;
+        this.portal.obj.visible = !this.inHoehle; this.boden.visible = true;
         r.dispose();
         const bild = new Image();
         bild.src = url;

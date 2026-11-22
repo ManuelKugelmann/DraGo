@@ -22,17 +22,18 @@ const mische = (arr, rnd) => {
 };
 const ganz = (rnd, a, b) => a + Math.floor(rnd() * (b - a + 1));
 
-/** Zwei Rechnungen mit verschiedenem Ergebnis für n Funken. richtig = Index der besseren. */
+/** Schätz-Tor: immer Plus gegen Mal (z. B. + 4 oder × 2), mit verschiedenem Ergebnis für n Funken.
+ *  richtig = Index der Rechnung, die mehr Funken gibt. */
 export function schaetzTor(n, rnd = Math.random) {
+    const mal = RECHNUNGEN.filter(r => r.text.startsWith('×')), plus = RECHNUNGEN.filter(r => r.text.startsWith('+'));
     for (let versuch = 0; versuch < 50; versuch++) {
-        const [a, b] = mische(RECHNUNGEN, rnd);
-        if (a.f(n) !== b.f(n)) {
-            return { art: 'schaetzen', frage: `${n} Funken`, optionen: [a.text, b.text],
-                rechnungen: [a, b], richtig: a.f(n) > b.f(n) ? 0 : 1 };
-        }
+        const m = mal[Math.floor(rnd() * mal.length)], p = plus[Math.floor(rnd() * plus.length)];
+        if (m.f(n) === p.f(n)) continue;
+        const [a, b] = rnd() < 0.5 ? [m, p] : [p, m];
+        return { art: 'schaetzen', frage: `${n} Funken`, optionen: [a.text, b.text], rechnungen: [a, b], richtig: a.f(n) > b.f(n) ? 0 : 1 };
     }
-    return { art: 'schaetzen', frage: `${n} Funken`, optionen: ['× 2', '+ 2'],
-        rechnungen: [RECHNUNGEN[0], RECHNUNGEN[2]], richtig: n > 2 ? 0 : 1 };
+    const [a, b] = [mal[0], plus[plus.length - 1]];
+    return { art: 'schaetzen', frage: `${n} Funken`, optionen: [a.text, b.text], rechnungen: [a, b], richtig: a.f(n) > b.f(n) ? 0 : 1 };
 }
 
 const STANDARD = { plusBis: 100, malReihen: [2, 3, 4, 5, 6, 7, 8, 9, 10], malBis: 10, vokabeln: true };

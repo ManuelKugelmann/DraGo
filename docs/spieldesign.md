@@ -18,11 +18,12 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
 - **Alter** am Start wählen (6–12): Aufgaben passen sich an (Klasse 1: bis 20, 2er/5er/10er; Englisch ab Klasse 3).
 - **Ausbrüten (Magiestrom, Echtzeit, 90 s):** Deine Figur steht neben dem Ei. Gelöste Aufgaben schicken Funken zum Ei, sie kreisen
   darum. Schatten-Funken kommen von außen, jeder Treffer löscht einen eigenen Funken. Der Rest wärmt das Ei.
-  Aufgaben zufällig: „Was gibt mehr Funken?“ (× 2 oder + 4), Einmaleins, Plus/Minus, Vokabeln (richtig = doppelt).
+  Aufgaben zufällig: „Was gibt mehr Funken?“ (immer Plus gegen Mal, mit der Funken-Zahl von jetzt), Einmaleins, Plus/Minus, Vokabeln (richtig = doppelt).
   Wärme voll: Risse, Ei bricht auf, zufälliger Babydrache (Feuer, Sturm, Rune). Schneller = stärker (1–3 ⭐).
 
 ## Entscheidungen
 
+- 2026-11-22: **Ständiger Schatten-Strom.** Mal-/Plus-Fragen wirken auf die **aktuelle** Funken-Zahl. Schätzen: immer **Plus gegen Mal**.
 - 2026-11-22: **Feuer-Schein ums Ei wächst mit der Wärme.**
 - 2026-11-22: Magiestrom **in Echtzeit**: ständiger Schatten-Strom, **gegen die Zeit**, man **kann verlieren** und muss
   nochmal versuchen. Figuren: **normale Schüler**, **Junge und Mädchen** (kommt mit dem Pupil-Rig).

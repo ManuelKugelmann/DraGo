@@ -83,8 +83,11 @@ export default class MagieStrom {
             const tor = zufallsTor(this.z.n, VOKABELN, Math.random, this.stufe);
             const wahl = await this.frage(tor);
             if (!this.laeuft) break;
-            const gut = wahl === tor.richtig;
-            const neu = Math.max(0, nachTor(tor, wahl, Math.max(1, this.z.n), MAGIE.bonus) - this.z.n);
+            // Rechnungen wirken auf die Funken, die man JETZT hat (die Zahl ändert sich ständig)
+            const n = Math.max(1, this.z.n);
+            let gut = wahl === tor.richtig;
+            if (tor.art === 'schaetzen') { const [a, b] = tor.rechnungen.map(r => r.f(n)); gut = wahl === 0 ? a >= b : b >= a; }
+            const neu = Math.max(0, nachTor(tor, wahl, n, MAGIE.bonus) - this.z.n);
             this.z.n += neu;
             this.passeKreis();
             this.melde(gut ? TEXTE.magie_richtig : (tor.art === 'schaetzen' ? TEXTE.magie_naja : TEXTE.magie_falsch), gut);
@@ -117,6 +120,7 @@ export default class MagieStrom {
 
     zeige() {
         this.anzeige.textContent = '✨ ' + this.z.n;
+        if (this.liveZahl) this.liveZahl.textContent = TEXTE.magie_du_hast + ' ✨ ' + this.z.n;
         this.balken.style.setProperty('--wert', Math.min(1, this.z.warm / MAGIE.ziel));
         this.uhr.style.setProperty('--wert', Math.max(0, 1 - this.z.zeit / MAGIE.zeit));
     }
@@ -124,7 +128,9 @@ export default class MagieStrom {
     frage(tor) {
         return new Promise(fertig => {
             this.antwort = fertig;
-            this.tor.replaceChildren(el('div', 'magie-frage', tor.art === 'schaetzen' ? `${TEXTE.magie_schaetzen} (${tor.frage})` : tor.frage));
+            const kopf = el('div', 'magie-frage', tor.art === 'schaetzen' ? TEXTE.magie_schaetzen : tor.frage);
+            if (tor.art === 'schaetzen') { this.liveZahl = el('div', 'magie-live'); kopf.append(this.liveZahl); } else this.liveZahl = null;
+            this.tor.replaceChildren(kopf);
             const reihe = el('div', 'magie-optionen');
             tor.optionen.forEach((o, i) => {
                 const b = el('button', 'magie-option', o);
