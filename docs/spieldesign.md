@@ -21,9 +21,13 @@ Hier stehen die Entscheidungen der Spiel-Designer (Kinder). Kurz, mit Datum. Neu
   außen, werden mehr und löschen Funken. Wettrennen! 100 Funken = Schlüpfen, 0 Funken = Ei kalt = nochmal.
   Aufgaben zufällig: „Was gibt mehr Funken?“ (immer Plus gegen Mal, mit der Funken-Zahl von jetzt), Einmaleins, Plus/Minus, Vokabeln (richtig = doppelt).
   100 Funken: Risse, Ei bricht auf, zufälliger Babydrache (Feuer, Sturm, Rune). Schneller = stärker (1–3 ⭐).
+- **Reihen-Ritt** (Knopf in der Höhle): Figur fährt auf einem Funken-Brett endlos bergab, Tippen = springen. Zahlen aus der
+  Reihe einsammeln (+3 s), falsche überspringen (sonst −4 s). Nach 10 richtigen kommt eine neue Reihe. Magie-Funken = Punkte, Rekord wird gemerkt.
 
 ## Entscheidungen
 
+- 2026-11-23: **Minispiel Reihen-Ritt:** Auf einem Brett Hügel hinunterfahren, Tippen = springen. Oben steht eine Reihe (z. B. 7er).
+  Zahlen aus der Reihe = mehr Zeit, falsche = weniger Zeit. So lange fahren wie möglich, Magie-Funken sammeln.
 - 2026-11-22: **Funken-Zahl = Wärme.** Schatten löschen Funken. 0 Funken = verloren.
 - 2026-11-22: **Schatten löschen Wärme** – Wettrennen: schneller wachsen als der Gegner. Wärme 0 = Ei kalt = nochmal.
 - 2026-11-22: **0 Funken = verloren.** Am Anfang ist **Plus** besser, später **Mal**. Frage-Kasten **unten in der Mitte als

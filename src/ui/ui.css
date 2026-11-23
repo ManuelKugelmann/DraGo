@@ -76,7 +76,7 @@ body.unterwegs .pfeil, body.unterwegs .unten, body.unterwegs .name, body.unterwe
 body.drin #ui > .hinter-portal { opacity: 1; }
 body.drin .titel, body.drin .kamera-knopf, body.drin .ar-knopf { display: none; }
 .hinter-portal { background: none !important; justify-content: space-between; padding: 12px 0 max(16px, env(safe-area-inset-bottom)); }
-.hinter-portal .brueten { margin-top: auto; }
+.hinter-portal .hoehle-knoepfe { margin-top: auto; display: flex; gap: 14px; }
 body.drin .hinter-portal > * { pointer-events: auto; }
 .hinter-portal h2 { pointer-events: none; }
 
@@ -96,9 +96,12 @@ body.drin .hinter-portal > * { pointer-events: auto; }
 .brueten { display: none; padding: 12px 30px; border-radius: 22px; font-size: 26px; font-weight: bold; margin-bottom: 14px;
     background: #9b5cff; box-shadow: 0 5px 0 #4a2380; }
 .hinter-portal.gefunden .brueten { display: block; }
+.ritt-knopf { display: none; padding: 12px 30px; border-radius: 22px; font-size: 26px; font-weight: bold; margin-bottom: 14px;
+    background: #2f8fd8; box-shadow: 0 5px 0 #17507e; }
+.hinter-portal.gefunden .ritt-knopf { display: block; }
 #ui > #magie { inset: 0; display: none; background: #2b1840 center / cover; }
 body.magie #ui > #magie { display: block; }
-body.magie .nochmal { position: fixed; z-index: 5; top: max(10px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left)); }
+body.magie .nochmal, body.ritt .nochmal { position: fixed; z-index: 5; top: max(10px, env(safe-area-inset-top)); left: max(10px, env(safe-area-inset-left)); }
 #magie > * { position: absolute; }
 .magie-leinwand { inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .magie-zahl { right: max(14px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); font-size: 26px; font-weight: bold;
@@ -136,3 +139,32 @@ body.magie .nochmal { position: fixed; z-index: 5; top: max(10px, env(safe-area-
 @media (orientation: portrait) {
     .magie-tor { flex-direction: column; gap: 8px; }
 }
+
+/* ---------- Reihen-Ritt ---------- */
+#ui > #ritt { inset: 0; display: none; background: #5b4a9e; touch-action: none; user-select: none; }
+body.ritt #ui > #ritt { display: block; }
+#ritt > * { position: absolute; }
+.ritt-leinwand { inset: 0; width: 100%; height: 100%; }
+.ritt-kopf { top: max(10px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; flex-direction: column;
+    align-items: center; gap: 6px; padding: 6px 18px 10px; border-radius: 18px; background: #24122fcc; pointer-events: none; }
+.ritt-reihe { font-size: clamp(26px, 7vmin, 40px); font-weight: bold; color: var(--gold); }
+.ritt-reihe.neu { animation: reihe-neu 0.8s; }
+@keyframes reihe-neu { 30% { scale: 1.5; color: #9dffb0; } }
+.ritt-uhr { width: min(40vw, 260px); height: 14px; border-radius: 7px; background: #ffffff22; overflow: hidden; }
+.ritt-uhr::after { content: ''; display: block; height: 100%; width: calc(var(--wert, 1) * 100%);
+    background: linear-gradient(90deg, #6fc3ff, #9dffb0); transition: width 0.2s; }
+.ritt-uhr.knapp::after { background: #ff8a6a; }
+.ritt-magie { right: max(14px, env(safe-area-inset-right)); top: max(12px, env(safe-area-inset-top)); font-size: 26px; font-weight: bold;
+    padding: 4px 14px; border-radius: 14px; background: #24122fcc; color: var(--gold); pointer-events: none; }
+.ritt-hinweis { left: 50%; top: 30%; transform: translateX(-50%); font-size: clamp(20px, 5vmin, 30px); font-weight: bold; opacity: 0;
+    transition: opacity 0.3s; pointer-events: none; padding: 6px 18px; border-radius: 16px; background: #24122fcc; text-align: center; max-width: 90vw; }
+.ritt-hinweis.zeigen { opacity: 1; }
+.ritt-ende { left: 50%; top: 50%; transform: translate(-50%, -50%); display: none; flex-direction: column; align-items: center; gap: 10px;
+    padding: 18px 30px; border-radius: 24px; background: #24122fe6; border: 3px solid #6fc3ff; }
+.ritt-ende.zeigen { display: flex; }
+.ritt-ende h2 { margin: 0; color: var(--gold); font-size: clamp(26px, 7vmin, 40px); }
+.ritt-wert { font-size: 30px; font-weight: bold; white-space: pre; }
+.ritt-rekord { font-size: 22px; color: #9dffb0; }
+.ritt-nochmal { padding: 12px 30px; border-radius: 22px; font-size: 26px; font-weight: bold; background: #2f8fd8; box-shadow: 0 5px 0 #17507e; }
+#ritt.wackeln .ritt-leinwand { animation: ritt-wackeln 0.3s; }
+@keyframes ritt-wackeln { 25% { translate: -5px 0; } 75% { translate: 5px 0; } }

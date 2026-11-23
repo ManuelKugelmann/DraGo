@@ -26,7 +26,14 @@ export const TEXTE = {
     magie_geschluepft: 'Dein Drache schlüpft!',
     magie_kalt: 'Oh nein, das Ei ist kalt geworden!',
     magie_nochmal: 'Nochmal ✨',
-    alter_frage: 'Wie alt bist du?'
+    alter_frage: 'Wie alt bist du?',
+    ritt: '🏂 Reihen-Ritt',
+    ritt_reihe: 'er-Reihe',
+    ritt_tipp: 'Tippen = springen! Sammle nur Zahlen aus der Reihe.',
+    ritt_neue_reihe: 'Neue Reihe:',
+    ritt_ende: 'Ritt vorbei!',
+    ritt_rekord: 'Neuer Rekord!',
+    ritt_nochmal: 'Nochmal 🏂'
 };
 
 // Spielfiguren (3D, KayKit Adventurers, CC0). datei = Datei in public/figuren/.
@@ -68,6 +75,11 @@ export const HAARFARBEN = [null, 0x1c1410, 0x3b2416, 0x6a4128, 0x9a6a3e, 0xd9b26
 // sterne = Sekunden bis zum Schlüpfen für ⭐⭐⭐ und ⭐⭐ (schneller = stärkerer Drache).
 export const MAGIE = { start: 5, ziel: 100, bonus: 2,
     schatten_start: 0.3, schatten_plus: 0.15, kaelte: 1, sterne: [25, 45] };
+
+// Reihen-Ritt (Minispiel): zeit = Sekunden am Anfang, max = mehr geht nicht, plus = Sekunden für eine richtige Zahl,
+// minus = Sekunden weg bei einer falschen Zahl, wechsel = neue Reihe nach so vielen richtigen Zahlen,
+// richtig_anteil = wie viele Zahlen auf der Strecke richtig sind (0.5 = die Hälfte).
+export const RITT = { zeit: 20, max: 30, plus: 3, minus: 4, wechsel: 10, richtig_anteil: 0.5 };
 
 // Vokabeln für Frage-Tore (deutsch -> englisch). Einfach Zeilen dazuschreiben!
 export const VOKABELN = [

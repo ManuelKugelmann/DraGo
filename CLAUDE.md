@@ -60,6 +60,7 @@ src/rig/                Puppe (Chat-B-Stil): retarget.js (rein, getestet), Pupil
 src/start/ar.js         WebXR-AR: Tor auf echten Boden stellen (Android Chrome)
 src/hoehle/Diorama.js   Höhle als 2.5D-Diorama (gemalte Tafeln, Teile in daten.js HOEHLE_TEILE)
 src/magiestrom/          Ei ausbrüten: regeln.js (rein, getestet), MagieStrom.js (Grafik)
+src/reihenritt/         Minispiel Reihen-Ritt: regeln.js (rein, getestet), ReihenRitt.js (Grafik)
 src/ui/ui.css           Seiten-Stil
 src/net/                Mehrspieler, fertig aber noch nicht eingebaut
 public/figuren/         KayKit-Figuren (CC0), erzeugt mit scripts/prep-figuren.mjs

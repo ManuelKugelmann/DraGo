@@ -3,6 +3,7 @@ import { TEXTE, FIGUREN, HAARFARBEN } from '../daten.js';
 import { kameraAn, kameraAus } from './kamera.js';
 import { arMoeglich, arSitzung } from './ar.js';
 import MagieStrom from '../magiestrom/MagieStrom.js';
+import ReihenRitt from '../reihenritt/ReihenRitt.js';
 import { ALTER } from '../magiestrom/stufen.js';
 
 const SPEICHER = 'drago_spieler';
@@ -116,11 +117,20 @@ export function baueStartUi(szene, leinwand) {
     const text = el('h2', '');
     const nochmal = el('button', 'nochmal', TEXTE.nochmal);
     const brueten = el('button', 'brueten', TEXTE.ausbrueten);
-    hinter.append(text, brueten, nochmal);
+    const ritt = el('button', 'ritt-knopf', TEXTE.ritt);
+    const knoepfe = el('div', 'hoehle-knoepfe');
+    knoepfe.append(brueten, ritt);
+    hinter.append(text, knoepfe, nochmal);
     const magieEbene = el('div', '');
     magieEbene.id = 'magie';
     magieEbene.style.backgroundImage = 'url(img/splash.webp)';
-    let magie = null;
+    const rittEbene = el('div', '');
+    rittEbene.id = 'ritt';
+    let magie = null, reihenRitt = null;
+    ritt.onclick = async () => {
+        reihenRitt = new ReihenRitt(rittEbene, await szene.figurBild(300, 480, 1.3), wahl.alter);
+        document.body.classList.add('ritt');
+    };
     brueten.onclick = async () => {
         magie = new MagieStrom(magieEbene, await szene.figurBild(), wahl.alter);
         document.body.classList.add('magie');
@@ -146,7 +156,8 @@ export function baueStartUi(szene, leinwand) {
     };
     nochmal.onclick = () => {
         magie?.beenden(); magie = null;
-        document.body.classList.remove('drin', 'unterwegs', 'magie');
+        reihenRitt?.beenden(); reihenRitt = null;
+        document.body.classList.remove('drin', 'unterwegs', 'magie', 'ritt');
         szene.zuruecksetzen();
     };
 
@@ -154,6 +165,6 @@ export function baueStartUi(szene, leinwand) {
         if (document.body.classList.contains('drin')) { if (szene.tippe(e.clientX, e.clientY)) eiGefunden(); }
         else szene.winken();
     });
-    ui.append(titel, name, alter, links, rechts, kamera, ar, arHinweis, meldung, unten, hinter, magieEbene);
+    ui.append(titel, name, alter, links, rechts, kamera, ar, arHinweis, meldung, unten, hinter, magieEbene, rittEbene);
     szene.zeige(wahl.figur, wahl.haar);
 }

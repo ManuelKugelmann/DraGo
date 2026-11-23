@@ -5,6 +5,7 @@
 import { zufallsTor, nachTor, staerke, neuerZustand, neueSchatten, treffer, stand } from './regeln.js';
 import { stufe } from './stufen.js';
 import { MAGIE, VOKABELN, TEXTE, DRACHEN } from '../daten.js';
+import { leuchtPunkt } from '../ui/leuchtPunkt.js';
 
 const warte = ms => new Promise(r => setTimeout(r, ms));
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; };
@@ -12,16 +13,6 @@ const BILD = { w: 1344, h: 768, ei: { x: 685, y: 480, rx: 150, ry: 185 } };   //
 const MAX_KREIS = 120;     // so viele eigene Funken werden höchstens gezeichnet
 const FLUG = 1.3;          // Sekunden, die ein Schatten bis zum Ei braucht
 const lade = src => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; });
-
-/** Vorgerenderter Leucht-Punkt (schnell zu zeichnen). */
-function leuchtPunkt(farbe, r = 16) {
-    const c = document.createElement('canvas');
-    c.width = c.height = r * 2;
-    const g = c.getContext('2d'), v = g.createRadialGradient(r, r, 0, r, r, r);
-    v.addColorStop(0, '#ffffff'); v.addColorStop(0.25, farbe); v.addColorStop(1, 'rgba(0,0,0,0)');
-    g.fillStyle = v; g.fillRect(0, 0, r * 2, r * 2);
-    return c;
-}
 
 export default class MagieStrom {
     constructor(wurzel, figurBild = null, alter = 9) {

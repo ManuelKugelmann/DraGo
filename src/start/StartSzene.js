@@ -162,8 +162,8 @@ export default class StartSzene {
         this.kamera.position.set(...START_KAMERA);
     }
 
-    /** Bild der eigenen Figur (von schräg vorne, durchsichtiger Hintergrund), z. B. fürs Ausbrüten. */
-    async figurBild(breite = 300, hoehe = 480) {
+    /** Bild der eigenen Figur (durchsichtiger Hintergrund), z. B. fürs Ausbrüten. dreh 0.4 = schräg vorne, 1.3 = nach rechts. */
+    async figurBild(breite = 300, hoehe = 480, dreh = 0.4) {
         if (!this.figur) return null;
         const f = this.figur.obj, alt = { dreh: f.rotation.y, pos: f.position.clone(), sicht: f.visible };
         const r = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
@@ -172,7 +172,7 @@ export default class StartSzene {
         const cam = new THREE.PerspectiveCamera(30, breite / hoehe, 0.1, 20);
         cam.position.set(0, 0.85, 3.6);
         cam.lookAt(0, 0.78, 0);
-        f.rotation.y = 0.4; f.position.set(0, 0, 0); f.visible = true;
+        f.rotation.y = dreh; f.position.set(0, 0, 0); f.visible = true;
         const hoehleSichtbar = this.hoehle.obj.visible;
         this.portal.obj.visible = false; this.boden.visible = false; this.hoehle.obj.visible = false;
         r.render(this.scene, cam);
